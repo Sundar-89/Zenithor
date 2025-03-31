@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zenithor - Recruitment Portal</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #004b6b;
+      --secondary: #0077a1;
+      --accent: #00c2ff;
+      --light: #f4f8fb;
+      --dark: #003b56;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f5f5;
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      color: white;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 15px;
+    }
+
+    .logo {
+      height: 60px;
+      margin-right: 15px;
+    }
+
+    .header-content h1 {
+      margin: 0;
+      font-size: 2.5rem;
+      color: white;
+    }
+
+    .header-content p {
+      margin: 5px 0 0;
+      font-size: 1.2rem;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    nav {
+      display: flex;
+      justify-content: center;
+      background-color: var(--dark);
+      padding: 15px 0;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin: 0 20px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      padding: 5px 10px;
+      border-radius: 4px;
+    }
+
+    nav a:hover {
+      color: var(--accent);
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .welcome-section {
+      text-align: center;
+      padding: 60px 20px;
+      background: linear-gradient(135deg, var(--primary), var(--dark));
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .welcome-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80') center/cover;
+      opacity: 0.15;
+      z-index: 0;
+    }
+
+    .welcome-content {
+      position: relative;
+      z-index: 1;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .welcome-content h2 {
+      font-size: 2.8rem;
+      margin-bottom: 20px;
+      animation: fadeInDown 1s ease;
+    }
+
+    .welcome-content p {
+      font-size: 1.2rem;
+      margin-bottom: 30px;
+      animation: fadeIn 1.5s ease;
+    }
+
+    .recruiter-name {
+      color: var(--accent);
+      font-weight: bold;
+    }
+
+    .stats-container {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 30px;
+      margin: 40px 0;
+      animation: fadeInUp 1s ease;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(5px);
+      border-radius: 12px;
+      padding: 25px;
+      min-width: 200px;
+      text-align: center;
+      transition: transform 0.3s ease;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .stat-card:hover {
+      transform: translateY(-10px);
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: white;
+    }
+
+    .stat-label {
+      font-size: 1rem;
+      opacity: 0.9;
+    }
+
+    .department-section {
+      padding: 60px 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .department-section h2 {
+      text-align: center;
+      margin-bottom: 40px;
+      color: var(--primary);
+      font-size: 2.5rem;
+      position: relative;
+    }
+
+    .department-section h2::after {
+      content: '';
+      display: block;
+      width: 80px;
+      height: 4px;
+      background: var(--accent);
+      margin: 15px auto;
+      border-radius: 2px;
+    }
+
+    .department-cards {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+    }
+
+    .department-card {
+      flex: 1 1 300px;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .department-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .department-image {
+      height: 200px;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .finance-image {
+      background-image: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url('https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1511&q=80');
+    }
+
+    .marketing-image {
+      background-image: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url('https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80');
+    }
+
+    .operations-image {
+      background-image: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url('https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80');
+    }
+
+    .department-info {
+      padding: 25px;
+    }
+
+    .department-info h3 {
+      color: var(--primary);
+      margin-bottom: 15px;
+      font-size: 1.8rem;
+    }
+
+    .department-info p {
+      margin-bottom: 20px;
+      color: #555;
+    }
+
+    .view-candidates-btn {
+      display: inline-block;
+      padding: 12px 25px;
+      background: var(--secondary);
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .view-candidates-btn:hover {
+      background: var(--primary);
+      transform: scale(1.05);
+    }
+
+    footer {
+      background-color: var(--dark);
+      color: white;
+      text-align: center;
+      padding: 40px 20px;
+      margin-top: auto;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 40px;
+    }
+
+    .footer-section {
+      flex: 1 1 300px;
+      text-align: left;
+    }
+
+    .footer-section h3 {
+      color: var(--accent);
+      margin-bottom: 20px;
+      font-size: 1.5rem;
+    }
+
+    .footer-section p {
+      margin-bottom: 15px;
+    }
+
+    .social-links {
+      display: flex;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .social-links a {
+      color: white;
+      font-size: 1.5rem;
+      transition: color 0.3s ease;
+    }
+
+    .social-links a:hover {
+      color: var(--accent);
+    }
+
+    .copyright {
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      width: 100%;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .welcome-content h2 {
+        font-size: 2.2rem;
+      }
+      
+      nav {
+        flex-direction: column;
+        align-items: center;
+        padding: 10px 0;
+      }
+      
+      nav a {
+        margin: 5px 0;
+      }
+      
+      .stat-card {
+        min-width: 150px;
+        padding: 15px;
+      }
+      
+      .department-card {
+        flex: 1 1 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo-container">
+      <img src="logo.svg" alt="Zenithor Logo" class="logo">
+      <div class="header-content">
+        <h1>Zenithor Recruitment Portal</h1>
+        <p>Find the best talent for our sustainable energy mission</p>
+      </div>
+    </div>
+  </header>
+
+  <nav>
+    <a href="#welcome">Welcome</a>
+    <a href="#departments">Departments</a>
+    <a href="FINANCE.html">Finance Candidates</a>
+    <a href="MARKETING.html">Marketing Candidates</a>
+    <a href="OPERATIONS.html">Operations Candidates</a>
+  </nav>
+
+  <section id="welcome" class="welcome-section">
+    <div class="welcome-content">
+      <h2>Welcome, <span class="recruiter-name">Recruiter</span></h2>
+      <p>We're thrilled to have you help us build the future of renewable energy at Zenithor. This portal gives you access to all candidate information and tools you need to make the best hiring decisions.</p>
+      
+      <div class="stats-container">
+        <div class="stat-card">
+          <div class="stat-number">42</div>
+          <div class="stat-label">Open Positions</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">156</div>
+          <div class="stat-label">Active Candidates</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">87%</div>
+          <div class="stat-label">Hiring Success Rate</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">24</div>
+          <div class="stat-label">New Hires This Quarter</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="departments" class="department-section">
+    <h2>Browse Candidates by Department</h2>
+    
+    <div class="department-cards">
+      <div class="department-card">
+        <div class="department-image finance-image"></div>
+        <div class="department-info">
+          <h3>Finance</h3>
+          <p>Review candidates for financial roles including analysts, accountants, and financial planners who will help manage our sustainable growth.</p>
+          <a href="FINANCE.html" class="view-candidates-btn">View Finance Candidates</a>
+        </div>
+      </div>
+      
+      <div class="department-card">
+        <div class="department-image marketing-image"></div>
+        <div class="department-info">
+          <h3>Marketing</h3>
+          <p>Explore marketing professionals who can help communicate our mission and promote our renewable energy solutions.</p>
+          <a href="MARKETING.html" class="view-candidates-btn">View Marketing Candidates</a>
+        </div>
+      </div>
+      
+      <div class="department-card">
+        <div class="department-image operations-image"></div>
+        <div class="department-info">
+          <h3>Operations</h3>
+          <p>Discover operations specialists who will ensure the efficient production and delivery of our energy solutions.</p>
+          <a href="OPERATIONS.html" class="view-candidates-btn">View Operations Candidates</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>About Zenithor</h3>
+        <p>Leading the renewable energy revolution with innovative solutions for a sustainable future.</p>
+        <div class="social-links">
+          <a href="#"><i class="fab fa-facebook"></i></a>
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-linkedin"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+        </div>
+      </div>
+      
+      <div class="footer-section">
+        <h3>Quick Links</h3>
+        <p><a href="#welcome" style="color: white;">Welcome</a></p>
+        <p><a href="#departments" style="color: white;">Departments</a></p>
+        <p><a href="FINANCE.html" style="color: white;">Finance</a></p>
+        <p><a href="MARKETING.html" style="color: white;">Marketing</a></p>
+        <p><a href="OPERATIONS.html" style="color: white;">Operations</a></p>
+      </div>
+      
+      <div class="footer-section">
+        <h3>Contact HR</h3>
+        <p><i class="fas fa-map-marker-alt"></i> 123 Energy Way, Solar City</p>
+        <p><i class="fas fa-phone"></i> (555) 123-4567</p>
+        <p><i class="fas fa-envelope"></i> <a href="mailto:hr@zenithor.com" style="color: var(--accent);">hr@zenithor.com</a></p>
+      </div>
+      
+      <div class="copyright">
+        <p>&copy; 2024 Zenithor Energy Solutions. All Rights Reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Set recruiter name (you could pull this from login in a real system)
+    const urlParams = new URLSearchParams(window.location.search);
+    const name = urlParams.get('name') || 'Recruiter';
+    document.querySelector('.recruiter-name').textContent = name;
+    
+    // Animate stats counting up
+    const statNumbers = document.querySelectorAll('.stat-number');
+    const targetNumbers = [42, 156, 87, 24];
+    const durations = [2000, 2500, 1500, 1800];
+    
+    statNumbers.forEach((el, index) => {
+      const target = targetNumbers[index];
+      const duration = durations[index];
+      const increment = target / (duration / 16);
+      let current = 0;
+      
+      const animate = () => {
+        current += increment;
+        if (current < target) {
+          el.textContent = Math.floor(current);
+          requestAnimationFrame(animate);
+        } else {
+          el.textContent = index === 2 ? target + '%' : target;
+        }
+      };
+      
+      setTimeout(() => {
+        animate();
+      }, 500 * index);
+    });
+  </script>
+</body>
+</html>

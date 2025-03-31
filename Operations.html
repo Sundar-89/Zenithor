@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zenithor - Operations Recruitment Portal</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #004b6b;
+      --secondary: #0077a1;
+      --accent: #00c2ff;
+      --light: #f4f8fb;
+      --dark: #003b56;
+      --operations-color: #D32F2F; /* Changed to red as requested */
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f5f5;
+      color: #333;
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      color: white;
+      padding: 5px;
+      text-align: center;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 15px;
+    }
+
+    .logo {
+      height: 100px;
+      margin-right: 15px;
+    }
+
+    .header-content h1 {
+      margin: 0;
+      font-size: 2.5rem;
+      color: white;
+    }
+
+    .header-content p {
+      margin: 5px 0 0;
+      font-size: 1.2rem;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .filter-section {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 25px;
+      background-color: white;
+      color: var(--operations-color);
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      border: 2px solid var(--operations-color);
+    }
+
+    .filter-btn:hover, .filter-btn.active {
+      background-color: var(--operations-color);
+      color: white;
+    }
+
+    .search-box {
+      padding: 10px 15px;
+      border-radius: 25px;
+      border: 1px solid #ddd;
+      min-width: 250px;
+      font-size: 1rem;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .candidates-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+      width: 100%;
+      margin-bottom: 30px;
+    }
+
+    .candidate-card {
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s, box-shadow 0.3s;
+      border-top: 4px solid var(--operations-color);
+    }
+
+    .candidate-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .candidate-image {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      cursor: pointer;
+    }
+
+    .candidate-info {
+      padding: 15px;
+    }
+
+    .candidate-name {
+      font-size: 1.3rem;
+      margin: 0 0 5px;
+      color: var(--primary);
+    }
+
+    .candidate-position {
+      color: var(--operations-color);
+      font-weight: bold;
+      margin-bottom: 10px;
+      font-size: 0.9rem;
+    }
+
+    .candidate-skills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-bottom: 15px;
+    }
+
+    .skill-tag {
+      background-color: #e6f7ff;
+      color: var(--secondary);
+      padding: 3px 10px;
+      border-radius: 15px;
+      font-size: 0.8rem;
+    }
+
+    .action-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 15px;
+    }
+
+    .view-btn, .compare-btn {
+      padding: 8px 15px;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .view-btn {
+      background-color: var(--secondary);
+      color: white;
+    }
+
+    .view-btn:hover {
+      background-color: var(--primary);
+    }
+
+    .compare-btn {
+      background-color: white;
+      color: var(--secondary);
+      border: 1px solid var(--secondary);
+    }
+
+    .compare-btn:hover {
+      background-color: #e6f7ff;
+    }
+
+    /* Modal styling */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      overflow: auto;
+    }
+
+    .modal-content {
+      background-color: white;
+      margin: 5% auto;
+      padding: 20px;
+      border-radius: 10px;
+      width: 80%;
+      max-width: 900px;
+      max-height: 80vh;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .close-modal {
+      position: absolute;
+      top: 15px;
+      right: 25px;
+      color: #aaa;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close-modal:hover {
+      color: var(--primary);
+    }
+
+    .modal-header {
+      border-bottom: 1px solid #eee;
+      padding-bottom: 15px;
+      margin-bottom: 15px;
+    }
+
+    .modal-body {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .resume-section {
+      margin-bottom: 20px;
+    }
+
+    .resume-section h3 {
+      color: var(--primary);
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 5px;
+      display: inline-block;
+    }
+
+    .jd-section {
+      background-color: #f9f9f9;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 20px;
+    }
+
+    .jd-section h3 {
+      color: var(--operations-color);
+      margin-top: 0;
+    }
+
+    .jd-section ul {
+      padding-left: 20px;
+    }
+
+    .jd-section li {
+      margin-bottom: 8px;
+    }
+
+    .comparison-modal {
+      display: none;
+      position: fixed;
+      z-index: 1001;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.9);
+      overflow: auto;
+    }
+
+    .comparison-content {
+      background-color: white;
+      margin: 2% auto;
+      padding: 20px;
+      border-radius: 10px;
+      width: 95%;
+      max-width: 1400px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .comparison-candidate {
+      border: 1px solid #eee;
+      padding: 15px;
+      border-radius: 8px;
+    }
+
+    .comparison-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+    }
+
+    .comparison-image {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 50%;
+      margin-right: 15px;
+    }
+
+    .comparison-name {
+      font-size: 1.3rem;
+      color: var(--primary);
+      margin: 0;
+    }
+
+    .comparison-position {
+      color: var(--operations-color);
+      font-weight: bold;
+      margin: 5px 0;
+    }
+
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    .comparison-table th, .comparison-table td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+
+    .comparison-table th {
+      background-color: #f5f5f5;
+      color: var(--primary);
+    }
+
+    .highlight {
+      background-color: #fffde7;
+      font-weight: bold;
+    }
+
+    footer {
+      background-color: var(--dark);
+      color: white;
+      text-align: center;
+      padding: 20px;
+      margin-top: auto;
+    }
+
+    .compare-btn.active {
+      background-color: #e6f7ff !important;
+      border: 2px solid var(--secondary) !important;
+    }
+
+    @media (max-width: 768px) {
+      .controls {
+        flex-direction: column;
+      }
+      
+      .filter-section {
+        justify-content: center;
+      }
+      
+      .search-box {
+        width: 100%;
+      }
+      
+      .candidates-container {
+        grid-template-columns: 1fr;
+      }
+      
+      .modal-content {
+        width: 95%;
+        margin: 10% auto;
+      }
+      
+      .comparison-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo-container">
+      <img src="logo.svg" alt="Zenithor Logo" class="logo">
+      <div class="header-content">
+        <h1>Operations Recruitment Portal</h1>
+        <p>Find the best operations talent for Zenithor's manufacturing needs</p>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="controls">
+      <div class="filter-section">
+        <button class="filter-btn active" data-filter="all">All Candidates</button>
+        <button class="filter-btn" data-filter="team-lead">Team Lead</button>
+        <button class="filter-btn" data-filter="manager">Manager</button>
+        <button class="filter-btn" data-filter="supply-chain">Supply Chain</button>
+        <button class="filter-btn" data-filter="process-improve">Process Improvement</button>
+      </div>
+      <input type="text" class="search-box" placeholder="Search candidates...">
+    </div>
+
+    <div class="candidates-container">
+      <!-- Team Lead Candidates -->
+      <div class="candidate-card" data-position="team-lead">
+        <img src="DAVID MILLER.png" alt="David Miller" class="candidate-image" onclick="openModal('DAVID MILLER.png', 'David Miller', 'Operations Team Lead', 'team-lead')">
+        <div class="candidate-info">
+          <h3 class="candidate-name">David Miller</h3>
+          <p class="candidate-position">Operations Team Lead</p>
+          <div class="candidate-skills">
+            <span class="skill-tag">Lean Six Sigma</span>
+            <span class="skill-tag">Team Leadership</span>
+            <span class="skill-tag">Process Optimization</span>
+          </div>
+          <div class="action-buttons">
+            <button class="view-btn" onclick="openModal('DAVID MILLER.png', 'David Miller', 'Operations Team Lead', 'team-lead')">View Resume</button>
+            <button class="compare-btn" onclick="addToComparison('David Miller')">Compare</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="candidate-card" data-position="team-lead">
+        <img src="PRIYA SHARMA.png" alt="Priya Sharma" class="candidate-image" onclick="openModal('PRIYA SHARMA.png', 'Priya Sharma', 'Operations Team Lead', 'team-lead')">
+        <div class="candidate-info">
+          <h3 class="candidate-name">Priya Sharma</h3>
+          <p class="candidate-position">Operations Team Lead</p>
+          <div class="candidate-skills">
+            <span class="skill-tag">Manufacturing</span>
+            <span class="skill-tag">Quality Control</span>
+            <span class="skill-tag">Safety Compliance</span>
+          </div>
+          <div class="action-buttons">
+            <button class="view-btn" onclick="openModal('PRIYA SHARMA.png', 'Priya Sharma', 'Operations Team Lead', 'team-lead')">View Resume</button>
+            <button class="compare-btn" onclick="addToComparison('Priya Sharma')">Compare</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="candidate-card" data-position="team-lead">
+        <img src="AHMED KHAN1.png" alt="Ahmed Khan" class="candidate-image" onclick="openModal('AHMED KHAN1.png', 'Ahmed Khan', 'Operations Team Lead', 'team-lead')">
+        <div class="candidate-info">
+          <h3 class="candidate-name">Ahmed Khan</h3>
+          <p class="candidate-position">Operations Team Lead</p>
+          <div class="candidate-skills">
+            <span class="skill-tag">ERP Systems</span>
+            <span class="skill-tag">Production Planning</span>
+            <span class="skill-tag">Continuous Improvement</span>
+          </div>
+          <div class="action-buttons">
+            <button class="view-btn" onclick="openModal('AHMED KHAN1.png', 'Ahmed Khan', 'Operations Team Lead', 'team-lead')">View Resume</button>
+            <button class="compare-btn" onclick="addToComparison('Ahmed Khan')">Compare</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="candidate-card" data-position="team-lead">
+        <img src="AJAY SHARMA.png" alt="Ajay Sharma" class="candidate-image" onclick="openModal('AJAY SHARMA.png', 'Ajay Sharma', 'Operations Team Lead', 'team-lead')">
+        <div class="candidate-info">
+          <h3 class="candidate-name">Ajay Sharma</h3>
+          <p class="candidate-position">Operations Team Lead</p>
+          <div class="candidate-skills">
+            <span class="skill-tag">Shift Management</span>
+            <span class="skill-tag">Performance Metrics</span>
+            <span class="skill-tag">Team Development</span>
+          </div>
+          <div class="action-buttons">
+            <button class="view-btn" onclick="openModal('AJAY SHARMA.png', 'Ajay Sharma', 'Operations Team Lead', 'team-lead')">View Resume</button>
+            <button class="compare-btn" onclick="addToComparison('Ajay Sharma')">Compare</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Operations Manager Candidates -->
+      <div class="candidate-card" data-position="manager">
+        <img src="SARAH WILLIAMS.png" alt="Sarah Williams" class="candidate-image" onclick="openModal('SARAH WILLIAMS.png', 'Sarah Williams', 'Operations Manager', 'manager')">
+        <div class="candidate-info">
+          <h3 class="candidate-name">Sarah Williams</h3>
+          <p class="candidate-position">Operations Manager</p>
+          <div class="candidate-skills">
+            <span class="skill-tag">Strategic Planning</span>
+            <span class="skill-tag">Budget Management</span>
+            <span class="skill-tag">Cross-functional Leadership</span>
+          </div>
+          <div class="action-buttons">
+            <button class="view-btn" onclick="openModal('SARAH WILLIAMS.png', 'Sarah Williams', 'Operations Manager', 'manager')">View Resume</button>
+            <button class="compare-btn" onclick="addToComparison('Sarah Williams')">Compare</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="candidate-card" data-position="manager">
+        <img src="VINAY PATEL.png" alt="Vinay Patel" class="candidate-image" onclick="openModal('VINAY PATEL.png', 'Vinay Patel', 'Operations Manager', 'manager')">
+        <div class="candidate-info">
+          <h3 class="candidate-name">Vinay Patel</h3>
+          <p class="candidate-position">Operations Manager</p>
+          <div class="candidate-skills">
+            <span class="skill-tag">Process Optimization</span>
+            <span class="skill-tag">Quality Standards</span>
+            <span class="skill-tag">Project Management</span>
+          </div>
+          <div class="action-buttons">
+            <button class="view-btn" onclick="openModal('VINAY PATEL.png', 'Vinay Patel', 'Operations Manager', 'manager')">View Resume</button>
+            <button class="compare-btn" onclick="addToComparison('Vinay Patel')">Compare</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="candidate-card" data-position="manager">
+        <img src="REBECCA LIN.png" alt="Rebecca Lin" class="candidate-image" onclick="openModal('REBECCA LIN.png', 'Rebecca Lin', 'Operations Manager', 'manager')">
+        <div class="candidate-info">
+          <h3 class="candidate-name">Rebecca Lin</h3>
+          <p class="candidate-position">Operations Manager</p>
+          <div class="candidate-skills">
+            <span class="skill-tag">Operational Efficiency</span>
+            <span class="skill-tag">Risk Assessment</span>
+            <span class="skill-tag">Team Building</span>
+          </div>
+          <div class="action-buttons">
+            <button class="view-btn" onclick="openModal('REBECCA LIN.png', 'Rebecca Lin', 'Operations Manager', 'manager')">View Resume</button>
+            <button class="compare-btn" onclick="addToComparison('Rebecca Lin')">Compare</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="candidate-card" data-position="manager">
+        <img src="POOJA MEHTA.png" alt="Pooja Mehta" class="candidate-image" onclick="openModal('POOJA MEHTA.png', 'Pooja Mehta', 'Operations Manager', 'manager')">
+        <div class="candidate-info">
+          <h3 class="candidate-name">Pooja Mehta</h3>
+          <p class="candidate-position">Operations Manager</p>
+          <div class="candidate-skills">
+            <span class="skill-tag">Performance Metrics</span>
+            <span class="skill-tag">Continuous Improvement</span>
+            <span class="skill-tag">Employee Engagement</span>
+          </div>
+          <div class="action-buttons">
+            <button class="view-btn" onclick="openModal('POOJA MEHTA.png', 'Pooja Mehta', 'Operations Manager', 'manager')">View Resume</button>
+            <button class="compare-btn" onclick="addToComparison('Pooja Mehta')">Compare</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Supply Chain Executive Candidates -->
+      <div class="candidate-card" data-position="supply-chain">
+        <img src="RAHUL GUPTA.png" alt="Rahul Gupta" class="candidate-image" onclick="openModal('RAHUL GUPTA.png', 'Rahul Gupta', 'Supply Chain Executive', 'supply-chain')">
+        <div class="candidate-info">
+          <h3 class="candidate-name">Rahul Gupta</h3>
+          <p class="candidate-position">Supply Chain Executive</p>
+          <div class="candidate-skills">
+            <span class="skill-tag">Procurement</span>
+            <span class="skill-tag">Inventory Management</span>
+            <span class="skill-tag">Vendor Relations</span>
+          </div>
+          <div class="action-buttons">
+            <button class="view-btn" onclick="openModal('RAHUL GUPTA.png', 'Rahul Gupta', 'Supply Chain Executive', 'supply-chain')">View Resume</button>
+            <button class="compare-btn" onclick="addToComparison('Rahul Gupta')">Compare</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="candidate-card" data-position="supply-chain">
+        <img src="SIMRAN KAUR.png" alt="Simran Kaur" class="candidate-image" onclick="openModal('SIMRAN KAUR.png', 'Simran Kaur', 'Supply Chain Executive', 'supply-chain')">
+        <div class="candidate-info">
+          <h3 class="candidate-name">Simran Kaur</h3>
+          <p class="candidate-position">Supply Chain Executive</p>
+          <div class="candidate-skills">
+            <span class="skill-tag">Logistics</span>
+            <span class="skill-tag">Demand Forecasting</span>
+            <span class="skill-tag">ERP Systems</span>
+          </div>
+          <div class="action-buttons">
+            <button class="view-btn" onclick="openModal('SIMRAN KAUR.png', 'Simran Kaur', 'Supply Chain Executive', 'supply-chain')">View Resume</button>
+            <button class="compare-btn" onclick="addToComparison('Simran Kaur')">Compare</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="candidate-card" data-position="supply-chain">
+        <img src="AHMED SIDDIQUE.png" alt="Ahmed Siddique" class="candidate-image" onclick="openModal('AHMED SIDDIQUE.png', 'Ahmed Siddique', 'Supply Chain Executive', 'supply-chain')">
+        <div class="candidate-info">
+          <h3 class="candidate-name">Ahmed Siddique</h3>
+          <p class="candidate-position">Supply Chain Executive</p>
+          <div class="candidate-skills">
+            <span class="skill-tag">Supplier Negotiation</span>
+            <span class="skill-tag">Cost Reduction</span>
+            <span class="skill-tag">Supply Chain Analytics</span>
+          </div>
+          <div class="action-buttons">
+            <button class="view-btn" onclick="openModal('AHMED SIDDIQUE.png', 'Ahmed Siddique', 'Supply Chain Executive', 'supply-chain')">View Resume</button>
+            <button class="compare-btn" onclick="addToComparison('Ahmed Siddique')">Compare</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="candidate-card" data-position="supply-chain">
+        <img src="RAHUL VERMA.png" alt="Rahul Verma" class="candidate-image" onclick="openModal('RAHUL VERMA.png', 'Rahul Verma', 'Supply Chain Executive', 'supply-chain')">
+        <div class="candidate-info">
+          <h3 class="candidate-name">Rahul Verma</h3>
+          <p class="candidate-position">Supply Chain Executive</p>
+          <div class="candidate-skills">
+            <span class="skill-tag">Inventory Optimization</span>
+            <span class="skill-tag">Supply Chain Technology</span>
+            <span class="skill-tag">Process Improvement</span>
+          </div>
+          <div class="action-buttons">
+            <button class="view-btn" onclick="openModal('RAHUL VERMA.png', 'Rahul Verma', 'Supply Chain Executive', 'supply-chain')">View Resume</button>
+            <button class="compare-btn" onclick="addToComparison('Rahul Verma')">Compare</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Process Improvement Executive Candidates -->
+      <div class="candidate-card" data-position="process-improve">
+        <img src="ARJUN PRAKASH.png" alt="Arjun Prakash" class="candidate-image" onclick="openModal('ARJUN PRAKASH.png', 'Arjun Prakash', 'Process Improvement Executive', 'process-improve')">
+        <div class="candidate-info">
+          <h3 class="candidate-name">Arjun Prakash</h3>
+          <p class="candidate-position">Process Improvement Executive</p>
+          <div class="candidate-skills">
+            <span class="skill-tag">Lean Six Sigma</span>
+            <span class="skill-tag">Root Cause Analysis</span>
+            <span class="skill-tag">Workflow Optimization</span>
+          </div>
+          <div class="action-buttons">
+            <button class="view-btn" onclick="openModal('ARJUN PRAKASH.png', 'Arjun Prakash', 'Process Improvement Executive', 'process-improve')">View Resume</button>
+            <button class="compare-btn" onclick="addToComparison('Arjun Prakash')">Compare</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="candidate-card" data-position="process-improve">
+        <img src="DIVYA NAIR.png" alt="Divya Nair" class="candidate-image" onclick="openModal('DIVYA NAIR.png', 'Divya Nair', 'Process Improvement Executive', 'process-improve')">
+        <div class="candidate-info">
+          <h3 class="candidate-name">Divya Nair</h3>
+          <p class="candidate-position">Process Improvement Executive</p>
+          <div class="candidate-skills">
+            <span class="skill-tag">Continuous Improvement</span>
+            <span class="skill-tag">Quality Management</span>
+            <span class="skill-tag">Training & Development</span>
+          </div>
+          <div class="action-buttons">
+            <button class="view-btn" onclick="openModal('DIVYA NAIR.png', 'Divya Nair', 'Process Improvement Executive', 'process-improve')">View Resume</button>
+            <button class="compare-btn" onclick="addToComparison('Divya Nair')">Compare</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="candidate-card" data-position="process-improve">
+        <img src="RAJESH MALHOTRA.png" alt="Rajesh Malhotra" class="candidate-image" onclick="openModal('RAJESH MALHOTRA.png', 'Rajesh Malhotra', 'Process Improvement Executive', 'process-improve')">
+        <div class="candidate-info">
+          <h3 class="candidate-name">Rajesh Malhotra</h3>
+          <p class="candidate-position">Process Improvement Executive</p>
+          <div class="candidate-skills">
+            <span class="skill-tag">Process Mapping</span>
+            <span class="skill-tag">Waste Reduction</span>
+            <span class="skill-tag">Data Analysis</span>
+          </div>
+          <div class="action-buttons">
+            <button class="view-btn" onclick="openModal('RAJESH MALHOTRA.png', 'Rajesh Malhotra', 'Process Improvement Executive', 'process-improve')">View Resume</button>
+            <button class="compare-btn" onclick="addToComparison('Rajesh Malhotra')">Compare</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="candidate-card" data-position="process-improve">
+        <img src="SNEHA ARORA.png" alt="Sneha Arora" class="candidate-image" onclick="openModal('SNEHA ARORA.png', 'Sneha Arora', 'Process Improvement Executive', 'process-improve')">
+        <div class="candidate-info">
+          <h3 class="candidate-name">Sneha Arora</h3>
+          <p class="candidate-position">Process Improvement Executive</p>
+          <div class="candidate-skills">
+            <span class="skill-tag">Kaizen</span>
+            <span class="skill-tag">Cycle Time Reduction</span>
+            <span class="skill-tag">Change Management</span>
+          </div>
+          <div class="action-buttons">
+            <button class="view-btn" onclick="openModal('SNEHA ARORA.png', 'Sneha Arora', 'Process Improvement Executive', 'process-improve')">View Resume</button>
+            <button class="compare-btn" onclick="addToComparison('Sneha Arora')">Compare</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button id="compareSelectedBtn" style="display: none; margin-bottom: 30px; padding: 12px 25px; background-color: var(--operations-color); color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer;" onclick="openComparisonModal()">
+      Compare Selected Candidates (2)
+    </button>
+  </div>
+
+  <!-- Resume View Modal -->
+  <div id="resumeModal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeModal()">&times;</span>
+      <div class="modal-header">
+        <h2 id="modalCandidateName"></h2>
+        <p id="modalCandidatePosition" style="color: var(--operations-color); font-weight: bold;"></p>
+      </div>
+      <div class="modal-body">
+        <img id="modalResumeImage" src="" alt="Candidate Resume" style="width: 100%;">
+        <div class="jd-section" id="jdContent">
+          <!-- Job description will be inserted here by JavaScript -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Comparison Modal -->
+  <div id="comparisonModal" class="comparison-modal">
+    <div class="comparison-content">
+      <span class="close-modal" onclick="closeComparisonModal()">&times;</span>
+      <h2 style="color: var(--primary); text-align: center; margin-bottom: 20px;">Candidate Comparison</h2>
+      
+      <div class="comparison-grid" id="comparisonGrid">
+        <!-- Comparison content will be inserted here by JavaScript -->
+      </div>
+      
+      <div style="margin-top: 30px; text-align: center;">
+        <button onclick="closeComparisonModal()" style="padding: 10px 20px; background-color: var(--secondary); color: white; border: none; border-radius: 5px; cursor: pointer;">Close Comparison</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2024 Zenithor Energy Solutions. All Rights Reserved.</p>
+  </footer>
+
+  <script>
+    // Job Descriptions
+    const jobDescriptions = {
+      'team-lead': {
+        title: 'Operations Team Lead (Manufacturing)',
+        description: `
+          <h3>Job Title: Operations Team Lead</h3>
+          <p><strong>Department:</strong> Manufacturing</p>
+          <p><strong>Reports To:</strong> Operations Manager</p>
+          <p><strong>Job Type:</strong> Full-time</p>
+          <h4>Job Summary:</h4>
+          <p>The Operations Team Lead will oversee daily manufacturing operations, ensuring smooth workflow, efficiency, and safety compliance. This role involves leading teams, optimizing processes, and maintaining high standards of quality and productivity.</p>
+          <h4>Key Responsibilities:</h4>
+          <ul>
+            <li>Supervise and guide operational teams to achieve performance goals.</li>
+            <li>Implement Lean and Six Sigma practices to enhance efficiency and reduce waste.</li>
+            <li>Develop shift schedules to maximize resource utilization and minimize downtime.</li>
+            <li>Foster a positive team culture through training, mentoring, and conflict resolution.</li>
+            <li>Monitor safety protocols and ensure adherence to compliance standards.</li>
+            <li>Conduct performance evaluations and recommend improvements.</li>
+          </ul>
+          <h4>Required Skills and Competencies:</h4>
+          <ul>
+            <li>Strong leadership and team management capabilities.</li>
+            <li>Proficiency in process optimization techniques (Lean, Six Sigma).</li>
+            <li>Excellent communication and decision-making skills.</li>
+            <li>Ability to analyze operational data and implement actionable solutions.</li>
+          </ul>
+          <h4>Qualifications:</h4>
+          <ul>
+            <li>Bachelor's degree in Engineering, Operations Management, or related field (MBA preferred).</li>
+            <li>3+ years of experience in manufacturing operations.</li>
+            <li>Familiarity with ERP systems and production management tools.</li>
+          </ul>
+          <h4>Performance Metrics:</h4>
+          <ul>
+            <li>Improvement in production efficiency and reduction in downtime.</li>
+            <li>Team retention and satisfaction rates.</li>
+            <li>Compliance with safety and quality standards.</li>
+          </ul>
+        `
+      },
+      'manager': {
+        title: 'Operations Manager (Manufacturing)',
+        description: `
+          <h3>Job Title: Operations Manager</h3>
+          <p><strong>Department:</strong> Manufacturing</p>
+          <p><strong>Reports To:</strong> Plant Director</p>
+          <p><strong>Job Type:</strong> Full-time</p>
+          <h4>Job Summary:</h4>
+          <p>The Operations Manager will oversee end-to-end manufacturing processes, ensuring alignment with organizational goals and industry standards. This role focuses on strategic planning, resource optimization, and fostering a collaborative work environment.</p>
+          <h4>Key Responsibilities:</h4>
+          <ul>
+            <li>Develop and implement strategies to improve operational efficiency and productivity.</li>
+            <li>Manage budgets, resources, and project timelines effectively.</li>
+            <li>Ensure compliance with safety, quality, and environmental standards.</li>
+            <li>Lead cross-functional teams to achieve production targets and organizational goals.</li>
+            <li>Drive innovation and continuous improvement initiatives.</li>
+            <li>Collaborate with leadership to align operations with corporate strategies.</li>
+          </ul>
+          <h4>Required Skills and Competencies:</h4>
+          <ul>
+            <li>Strong analytical and project management skills.</li>
+            <li>Expertise in budget management and strategic planning.</li>
+            <li>Leadership capabilities to inspire and manage large teams.</li>
+            <li>Excellent problem-solving and risk assessment abilities.</li>
+          </ul>
+          <h4>Qualifications:</h4>
+          <ul>
+            <li>Bachelor's degree in Engineering, Business Administration, or related field (MBA preferred).</li>
+            <li>7+ years of experience in operations management.</li>
+            <li>Proven experience in leading large-scale projects and managing teams.</li>
+          </ul>
+          <h4>Performance Metrics:</h4>
+          <ul>
+            <li>Reduction in operational costs and waste.</li>
+            <li>Achievement of production deadlines and quality standards.</li>
+            <li>Employee engagement and retention rates.</li>
+          </ul>
+        `
+      },
+      'supply-chain': {
+        title: 'Supply Chain Executive (Manufacturing)',
+        description: `
+          <h3>Job Title: Supply Chain Executive</h3>
+          <p><strong>Department:</strong> Supply Chain</p>
+          <p><strong>Reports To:</strong> Supply Chain Manager</p>
+          <p><strong>Job Type:</strong> Full-time</p>
+          <h4>Job Summary:</h4>
+          <p>The Supply Chain Executive will manage procurement, inventory, and logistics to ensure seamless supply chain operations. This role emphasizes cost efficiency, timely deliveries, and vendor relationship management.</p>
+          <h4>Key Responsibilities:</h4>
+          <ul>
+            <li>Oversee inventory levels and coordinate procurement processes.</li>
+            <li>Build and maintain strong relationships with vendors and suppliers.</li>
+            <li>Implement demand forecasting techniques to optimize inventory.</li>
+            <li>Streamline logistics operations to minimize lead times and costs.</li>
+            <li>Monitor supply chain performance and implement improvements.</li>
+          </ul>
+          <h4>Required Skills and Competencies:</h4>
+          <ul>
+            <li>Expertise in vendor management and procurement.</li>
+            <li>Proficiency in ERP systems (SAP, Oracle).</li>
+            <li>Strong negotiation and analytical skills.</li>
+            <li>Ability to adapt to dynamic supply chain demands.</li>
+          </ul>
+          <h4>Qualifications:</h4>
+          <ul>
+            <li>Bachelor's degree in Supply Chain Management, Business, or related field.</li>
+            <li>3+ years of experience in procurement, logistics, or inventory management.</li>
+            <li>Familiarity with supply chain technologies and best practices.</li>
+          </ul>
+          <h4>Performance Metrics:</h4>
+          <ul>
+            <li>Reduction in lead times and inventory costs.</li>
+            <li>Supplier reliability and performance.</li>
+            <li>On-time delivery rates and customer satisfaction.</li>
+          </ul>
+        `
+      },
+      'process-improve': {
+        title: 'Process Improvement Executive (Manufacturing)',
+        description: `
+          <h3>Job Title: Process Improvement Executive</h3>
+          <p><strong>Department:</strong> Continuous Improvement</p>
+          <p><strong>Reports To:</strong> Process Improvement Manager</p>
+          <p><strong>Job Type:</strong> Full-time</p>
+          <h4>Job Summary:</h4>
+          <p>The Process Improvement Executive will analyze and optimize manufacturing workflows to enhance productivity and quality. This role focuses on implementing Lean Six Sigma methodologies and fostering a culture of continuous improvement.</p>
+          <h4>Key Responsibilities:</h4>
+          <ul>
+            <li>Identify inefficiencies and propose process enhancements.</li>
+            <li>Implement Lean Six Sigma practices to reduce defects and improve cycle time.</li>
+            <li>Conduct root cause analyses and develop actionable solutions.</li>
+            <li>Train teams on continuous improvement methodologies.</li>
+            <li>Collaborate with cross-functional teams to drive change.</li>
+          </ul>
+          <h4>Required Skills and Competencies:</h4>
+          <ul>
+            <li>Expertise in Lean and Six Sigma methodologies.</li>
+            <li>Strong analytical and problem-solving skills.</li>
+            <li>Excellent communication and training abilities.</li>
+            <li>Proficiency in data analysis tools.</li>
+          </ul>
+          <h4>Qualifications:</h4>
+          <ul>
+            <li>Bachelor's degree in Engineering, Operations, or related field.</li>
+            <li>3+ years of experience in process improvement.</li>
+            <li>Certification in Lean Six Sigma preferred.</li>
+          </ul>
+          <h4>Performance Metrics:</h4>
+          <ul>
+            <li>Reduction in defects and waste.</li>
+            <li>Improvement in production cycle times.</li>
+            <li>Team adoption of continuous improvement practices.</li>
+          </ul>
+        `
+      }
+    };
+
+    // Filter candidates by position
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    filterButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        filterButtons.forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+        
+        const filter = button.getAttribute('data-filter');
+        const candidates = document.querySelectorAll('.candidate-card');
+        
+        candidates.forEach(candidate => {
+          if (filter === 'all' || candidate.getAttribute('data-position') === filter) {
+            candidate.style.display = 'block';
+          } else {
+            candidate.style.display = 'none';
+          }
+        });
+      });
+    });
+    
+    // Search functionality
+    const searchBox = document.querySelector('.search-box');
+    searchBox.addEventListener('input', () => {
+      const searchTerm = searchBox.value.toLowerCase();
+      const candidates = document.querySelectorAll('.candidate-card');
+      
+      candidates.forEach(candidate => {
+        const name = candidate.querySelector('.candidate-name').textContent.toLowerCase();
+        const position = candidate.querySelector('.candidate-position').textContent.toLowerCase();
+        const skills = candidate.querySelector('.candidate-skills').textContent.toLowerCase();
+        
+        if (name.includes(searchTerm) || position.includes(searchTerm) || skills.includes(searchTerm)) {
+          candidate.style.display = 'block';
+        } else {
+          candidate.style.display = 'none';
+        }
+      });
+    });
+    
+    // Modal functionality
+    function openModal(imageSrc, name, position, roleType) {
+      const modal = document.getElementById('resumeModal');
+      const modalImage = document.getElementById('modalResumeImage');
+      const modalName = document.getElementById('modalCandidateName');
+      const modalPosition = document.getElementById('modalCandidatePosition');
+      const jdContent = document.getElementById('jdContent');
+      
+      modalImage.src = imageSrc;
+      modalName.textContent = name;
+      modalPosition.textContent = position;
+      
+      // Insert job description
+      if (jobDescriptions[roleType]) {
+        jdContent.innerHTML = jobDescriptions[roleType].description;
+      } else {
+        jdContent.innerHTML = '<p>No job description available for this position.</p>';
+      }
+      
+      modal.style.display = 'block';
+      document.body.style.overflow = 'hidden';
+    }
+    
+    function closeModal() {
+      document.getElementById('resumeModal').style.display = 'none';
+      document.body.style.overflow = 'auto';
+    }
+    
+    // Close modal when clicking outside content
+    window.onclick = function(event) {
+      const modal = document.getElementById('resumeModal');
+      if (event.target == modal) {
+        closeModal();
+      }
+    };
+    
+    // Comparison functionality
+    let selectedCandidates = [];
+    const compareSelectedBtn = document.getElementById('compareSelectedBtn');
+    
+    function addToComparison(candidateName) {
+      const candidateCards = document.querySelectorAll('.candidate-card');
+      let candidateCard = null;
+      
+      for (let card of candidateCards) {
+        if (card.querySelector('.candidate-name').textContent === candidateName) {
+          candidateCard = card;
+          break;
+        }
+      }
+      
+      if (!candidateCard) return;
+
+      const candidateImage = candidateCard.querySelector('.candidate-image').src;
+      const candidatePosition = candidateCard.querySelector('.candidate-position').textContent;
+      const candidateSkills = Array.from(candidateCard.querySelectorAll('.skill-tag')).map(tag => tag.textContent);
+      
+      const candidateIndex = selectedCandidates.findIndex(c => c.name === candidateName);
+      const compareBtn = candidateCard.querySelector('.compare-btn');
+      
+      if (candidateIndex === -1) {
+        if (selectedCandidates.length < 2) {
+          selectedCandidates.push({
+            name: candidateName,
+            image: candidateImage,
+            position: candidatePosition,
+            skills: candidateSkills
+          });
+          
+          compareBtn.classList.add('active');
+          updateCompareButton();
+        } else {
+          alert('You can compare up to 2 candidates at a time.');
+        }
+      } else {
+        selectedCandidates.splice(candidateIndex, 1);
+        compareBtn.classList.remove('active');
+        updateCompareButton();
+      }
+    }
+
+    function updateCompareButton() {
+      if (selectedCandidates.length > 0) {
+        compareSelectedBtn.textContent = `Compare Selected Candidates (${selectedCandidates.length})`;
+        compareSelectedBtn.style.display = 'block';
+      } else {
+        compareSelectedBtn.style.display = 'none';
+      }
+    }
+
+    function openComparisonModal() {
+      if (selectedCandidates.length < 2) {
+        alert('Please select 2 candidates to compare.');
+        return;
+      }
+      
+      const comparisonGrid = document.getElementById('comparisonGrid');
+      comparisonGrid.innerHTML = '';
+      
+      selectedCandidates.forEach(candidate => {
+        const comparisonCandidate = document.createElement('div');
+        comparisonCandidate.className = 'comparison-candidate';
+        
+        comparisonCandidate.innerHTML = `
+          <div class="comparison-header">
+            <img src="${candidate.image}" alt="${candidate.name}" class="comparison-image">
+            <div>
+              <h3 class="comparison-name">${candidate.name}</h3>
+              <p class="comparison-position">${candidate.position}</p>
+            </div>
+          </div>
+          
+          <table class="comparison-table">
+            <tr>
+              <th colspan="2">Skills</th>
+            </tr>
+            ${candidate.skills.map(skill => `
+              <tr>
+                <td>${skill}</td>
+                <td>
+                  <i class="fas fa-check" style="color: #4CAF50;"></i>
+                </td>
+              </tr>
+            `).join('')}
+          </table>
+        `;
+        
+        comparisonGrid.appendChild(comparisonCandidate);
+      });
+      
+      document.getElementById('comparisonModal').style.display = 'block';
+      document.body.style.overflow = 'hidden';
+    }
+    
+    function closeComparisonModal() {
+      document.getElementById('comparisonModal').style.display = 'none';
+      document.body.style.overflow = 'auto';
+    }
+  </script>
+</body>
+</html>

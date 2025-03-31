@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zenithor - Finance Recruitment Portal</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #004b6b;
+      --secondary: #0077a1;
+      --accent: #00c2ff;
+      --light: #f4f8fb;
+      --dark: #003b56;
+      --finance-color: #2E7D32; /* Professional green color */
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f5f5;
+      color: #333;
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      color: white;
+      padding: 5px;
+      text-align: center;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 15px;
+    }
+
+    .logo {
+      height: 100px;
+      margin-right: 15px;
+    }
+
+    .header-content h1 {
+      margin: 0;
+      font-size: 2.5rem;
+      color: white;
+    }
+
+    .header-content p {
+      margin: 5px 0 0;
+      font-size: 1.2rem;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .filter-section {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 25px;
+      background-color: white;
+      color: var(--finance-color);
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      border: 2px solid var(--finance-color);
+    }
+
+    .filter-btn:hover, .filter-btn.active {
+      background-color: var(--finance-color);
+      color: white;
+    }
+
+    .search-box {
+      padding: 10px 15px;
+      border-radius: 25px;
+      border: 1px solid #ddd;
+      min-width: 250px;
+      font-size: 1rem;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .candidates-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+      width: 100%;
+      margin-bottom: 30px;
+    }
+
+    .candidate-card {
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s, box-shadow 0.3s;
+      border-top: 4px solid var(--finance-color);
+    }
+
+    .candidate-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .candidate-image {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      cursor: pointer;
+    }
+
+    .candidate-info {
+      padding: 15px;
+    }
+
+    .candidate-name {
+      font-size: 1.3rem;
+      margin: 0 0 5px;
+      color: var(--primary);
+    }
+
+    .candidate-position {
+      color: var(--finance-color);
+      font-weight: bold;
+      margin-bottom: 10px;
+      font-size: 0.9rem;
+    }
+
+    .candidate-skills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-bottom: 15px;
+    }
+
+    .skill-tag {
+      background-color: #e6f7ff;
+      color: var(--secondary);
+      padding: 3px 10px;
+      border-radius: 15px;
+      font-size: 0.8rem;
+    }
+
+    .action-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 15px;
+    }
+
+    .view-btn, .compare-btn {
+      padding: 8px 15px;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .view-btn {
+      background-color: var(--secondary);
+      color: white;
+    }
+
+    .view-btn:hover {
+      background-color: var(--primary);
+    }
+
+    .compare-btn {
+      background-color: white;
+      color: var(--secondary);
+      border: 1px solid var(--secondary);
+    }
+
+    .compare-btn:hover {
+      background-color: #e6f7ff;
+    }
+
+    /* Modal styling */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      overflow: auto;
+    }
+
+    .modal-content {
+      background-color: white;
+      margin: 5% auto;
+      padding: 20px;
+      border-radius: 10px;
+      width: 80%;
+      max-width: 900px;
+      max-height: 80vh;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .close-modal {
+      position: absolute;
+      top: 15px;
+      right: 25px;
+      color: #aaa;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close-modal:hover {
+      color: var(--primary);
+    }
+
+    .modal-header {
+      border-bottom: 1px solid #eee;
+      padding-bottom: 15px;
+      margin-bottom: 15px;
+    }
+
+    .modal-body {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .resume-section {
+      margin-bottom: 20px;
+    }
+
+    .resume-section h3 {
+      color: var(--primary);
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 5px;
+      display: inline-block;
+    }
+
+    .jd-section {
+      background-color: #f9f9f9;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 20px;
+    }
+
+    .jd-section h3 {
+      color: var(--finance-color);
+      margin-top: 0;
+    }
+
+    .jd-section ul {
+      padding-left: 20px;
+    }
+
+    .jd-section li {
+      margin-bottom: 8px;
+    }
+
+    .comparison-modal {
+      display: none;
+      position: fixed;
+      z-index: 1001;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.9);
+      overflow: auto;
+    }
+
+    .comparison-content {
+      background-color: white;
+      margin: 2% auto;
+      padding: 20px;
+      border-radius: 10px;
+      width: 95%;
+      max-width: 1400px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .comparison-candidate {
+      border: 1px solid #eee;
+      padding: 15px;
+      border-radius: 8px;
+    }
+
+    .comparison-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+    }
+
+    .comparison-image {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 50%;
+      margin-right: 15px;
+    }
+
+    .comparison-name {
+      font-size: 1.3rem;
+      color: var(--primary);
+      margin: 0;
+    }
+
+    .comparison-position {
+      color: var(--finance-color);
+      font-weight: bold;
+      margin: 5px 0;
+    }
+
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    .comparison-table th, .comparison-table td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+
+    .comparison-table th {
+      background-color: #f5f5f5;
+      color: var(--primary);
+    }
+
+    .highlight {
+      background-color: #fffde7;
+      font-weight: bold;
+    }
+
+    footer {
+      background-color: var(--dark);
+      color: white;
+      text-align: center;
+      padding: 20px;
+      margin-top: auto;
+    }
+
+    .compare-btn.active {
+      background-color: #e6f7ff !important;
+      border: 2px solid var(--secondary) !important;
+    }
+
+    @media (max-width: 768px) {
+      .controls {
+        flex-direction: column;
+      }
+      
+      .filter-section {
+        justify-content: center;
+      }
+      
+      .search-box {
+        width: 100%;
+      }
+      
+      .candidates-container {
+        grid-template-columns: 1fr;
+      }
+      
+      .modal-content {
+        width: 95%;
+        margin: 10% auto;
+      }
+      
+      .comparison-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo-container">
+      <img src="logo.svg" alt="Zenithor Logo" class="logo">
+      <div class="header-content">
+        <h1>Finance Recruitment Portal</h1>
+        <p>Find the best finance talent for Zenithor's growth</p>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="controls">
+      <div class="filter-section">
+        <button class="filter-btn active" data-filter="all">All Candidates</button>
+        <button class="filter-btn" data-filter="team-lead">Team Lead</button>
+        <button class="filter-btn" data-filter="analyst">Analyst</button>
+        <button class="filter-btn" data-filter="accounting">Accounting</button>
+        <button class="filter-btn" data-filter="fpa">FP&A</button>
+      </div>
+      <input type="text" class="search-box" placeholder="Search candidates...">
+    </div>
+
+    <div class="candidates-container">
+      <!-- Team Lead Candidates -->
+      <div class="candidate-card" data-position="team-lead">
+        <img src="JOHN ANDERSON.png" alt="John Anderson" class="candidate-image" onclick="openModal('JOHN ANDERSON.png', 'John Anderson', 'Finance Team Lead', 'team-lead')">
+        <div class="candidate-info">
+          <h3 class="candidate-name">John Anderson</h3>
+          <p class="candidate-position">Finance Team Lead</p>
+          <div class="candidate-skills">
+            <span class="skill-tag">Financial Reporting</span>
+            <span class="skill-tag">Team Leadership</span>
+            <span class="skill-tag">Budgeting</span>
+          </div>
+          <div class="action-buttons">
+            <button class="view-btn" onclick="openModal('JOHN ANDERSON.png', 'John Anderson', 'Finance Team Lead', 'team-lead')">View Resume</button>
+            <button class="compare-btn" onclick="addToComparison('John Anderson')">Compare</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="candidate-card" data-position="team-lead">
+        <img src="PRIYA MEHTA.png" alt="Priya Mehta" class="candidate-image" onclick="openModal('PRIYA MEHTA.png', 'Priya Mehta', 'Finance Team Lead', 'team-lead')">
+        <div class="candidate-info">
+          <h3 class="candidate-name">Priya Mehta</h3>
+          <p class="candidate-position">Finance Team Lead</p>
+          <div class="candidate-skills">
+            <span class="skill-tag">Cost Management</span>
+            <span class="skill-tag">Compliance</span>
+            <span class="skill-tag">ERP Systems</span>
+          </div>
+          <div class="action-buttons">
+            <button class="view-btn" onclick="openModal('PRIYA MEHTA.png', 'Priya Mehta', 'Finance Team Lead', 'team-lead')">View Resume</button>
+            <button class="compare-btn" onclick="addToComparison('Priya Mehta')">Compare</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="candidate-card" data-position="team-lead">
+        <img src="AHMED KHAN.png" alt="Ahmed Khan" class="candidate-image" onclick="openModal('AHMED KHAN.png', 'Ahmed Khan', 'Finance Team Lead', 'team-lead')">
+        <div class="candidate-info">
+          <h3 class="candidate-name">Ahmed Khan</h3>
+          <p class="candidate-position">Finance Team Lead</p>
+          <div class="candidate-skills">
+            <span class="skill-tag">Financial Analysis</span>
+            <span class="skill-tag">Audit Management</span>
+            <span class="skill-tag">Process Optimization</span>
+          </div>
+          <div class="action-buttons">
+            <button class="view-btn" onclick="openModal('AHMED KHAN.png', 'Ahmed Khan', 'Finance Team Lead', 'team-lead')">View Resume</button>
+            <button class="compare-btn" onclick="addToComparison('Ahmed Khan')">Compare</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="candidate-card" data-position="team-lead">
+        <img src="SARAH ABRAHAM.png" alt="Sarah Abraham" class="candidate-image" onclick="openModal('SARAH ABRAHAM.png', 'Sarah Abraham', 'Finance Team Lead', 'team-lead')">
+        <div class="candidate-info">
+          <h3 class="candidate-name">Sarah Abraham</h3>
+          <p class="candidate-position">Finance Team Lead</p>
+          <div class="candidate-skills">
+            <span class="skill-tag">Forecasting</span>
+            <span class="skill-tag">Mentorship</span>
+            <span class="skill-tag">Cross-functional Collaboration</span>
+          </div>
+          <div class="action-buttons">
+            <button class="view-btn" onclick="openModal('SARAH ABRAHAM.png', 'Sarah Abraham', 'Finance Team Lead', 'team-lead')">View Resume</button>
+            <button class="compare-btn" onclick="addToComparison('Sarah Abraham')">Compare</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Financial Analyst Candidates -->
+      <div class="candidate-card" data-position="analyst">
+        <img src="DAVID MITCHELL.png" alt="David Mitchell" class="candidate-image" onclick="openModal('DAVID MITCHELL.png', 'David Mitchell', 'Financial Analyst', 'analyst')">
+        <div class="candidate-info">
+          <h3 class="candidate-name">David Mitchell</h3>
+          <p class="candidate-position">Financial Analyst</p>
+          <div class="candidate-skills">
+            <span class="skill-tag">Financial Modeling</span>
+            <span class="skill-tag">Excel</span>
+            <span class="skill-tag">Data Analysis</span>
+          </div>
+          <div class="action-buttons">
+            <button class="view-btn" onclick="openModal('DAVID MITCHELL.png', 'David Mitchell', 'Financial Analyst', 'analyst')">View Resume</button>
+            <button class="compare-btn" onclick="addToComparison('David Mitchell')">Compare</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="candidate-card" data-position="analyst">
+        <img src="ANJALI JOSEPH.png" alt="Anjali Joseph" class="candidate-image" onclick="openModal('ANJALI JOSEPH.png', 'Anjali Joseph', 'Financial Analyst', 'analyst')">
+        <div class="candidate-info">
+          <h3 class="candidate-name">Anjali Joseph</h3>
+          <p class="candidate-position">Financial Analyst</p>
+          <div class="candidate-skills">
+            <span class="skill-tag">Budgeting</span>
+            <span class="skill-tag">Variance Analysis</span>
+            <span class="skill-tag">Cost-Benefit Analysis</span>
+          </div>
+          <div class="action-buttons">
+            <button class="view-btn" onclick="openModal('ANJALI JOSEPH.png', 'Anjali Joseph', 'Financial Analyst', 'analyst')">View Resume</button>
+            <button class="compare-btn" onclick="addToComparison('Anjali Joseph')">Compare</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="candidate-card" data-position="analyst">
+        <img src="KEVIN LOPEZ.png" alt="Kevin Lopez" class="candidate-image" onclick="openModal('KEVIN LOPEZ.png', 'Kevin Lopez', 'Financial Analyst', 'analyst')">
+        <div class="candidate-info">
+          <h3 class="candidate-name">Kevin Lopez</h3>
+          <p class="candidate-position">Financial Analyst</p>
+          <div class="candidate-skills">
+            <span class="skill-tag">Financial Reporting</span>
+            <span class="skill-tag">Process Optimization</span>
+            <span class="skill-tag">Data Visualization</span>
+          </div>
+          <div class="action-buttons">
+            <button class="view-btn" onclick="openModal('KEVIN LOPEZ.png', 'Kevin Lopez', 'Financial Analyst', 'analyst')">View Resume</button>
+            <button class="compare-btn" onclick="addToComparison('Kevin Lopez')">Compare</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="candidate-card" data-position="analyst">
+        <img src="MARIA CHEN.png" alt="Maria Chen" class="candidate-image" onclick="openModal('MARIA CHEN.png', 'Maria Chen', 'Financial Analyst', 'analyst')">
+        <div class="candidate-info">
+          <h3 class="candidate-name">Maria Chen</h3>
+          <p class="candidate-position">Financial Analyst</p>
+          <div class="candidate-skills">
+            <span class="skill-tag">Trend Analysis</span>
+            <span class="skill-tag">Strategic Recommendations</span>
+            <span class="skill-tag">Financial Software</span>
+          </div>
+          <div class="action-buttons">
+            <button class="view-btn" onclick="openModal('MARIA CHEN.png', 'Maria Chen', 'Financial Analyst', 'analyst')">View Resume</button>
+            <button class="compare-btn" onclick="addToComparison('Maria Chen')">Compare</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Accounting Executive Candidates -->
+      <div class="candidate-card" data-position="accounting">
+        <img src="RIYA RANGANATHAN.png" alt="Riya Ranganathan" class="candidate-image" onclick="openModal('RIYA RANGANATHAN.png', 'Riya Ranganathan', 'Accounting Executive', 'accounting')">
+        <div class="candidate-info">
+          <h3 class="candidate-name">Riya Ranganathan</h3>
+          <p class="candidate-position">Accounting Executive</p>
+          <div class="candidate-skills">
+            <span class="skill-tag">Accounts Reconciliation</span>
+            <span class="skill-tag">QuickBooks</span>
+            <span class="skill-tag">Tax Compliance</span>
+          </div>
+          <div class="action-buttons">
+            <button class="view-btn" onclick="openModal('RIYA RANGANATHAN.png', 'Riya Ranganathan', 'Accounting Executive', 'accounting')">View Resume</button>
+            <button class="compare-btn" onclick="addToComparison('Riya Ranganathan')">Compare</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="candidate-card" data-position="accounting">
+        <img src="SHOBITA AARAV.png" alt="Shobita Aarav" class="candidate-image" onclick="openModal('SHOBITA AARAV.png', 'Shobita Aarav', 'Accounting Executive', 'accounting')">
+        <div class="candidate-info">
+          <h3 class="candidate-name">Shobita Aarav</h3>
+          <p class="candidate-position">Accounting Executive</p>
+          <div class="candidate-skills">
+            <span class="skill-tag">Financial Reporting</span>
+            <span class="skill-tag">Month-end Closing</span>
+            <span class="skill-tag">SAP</span>
+          </div>
+          <div class="action-buttons">
+            <button class="view-btn" onclick="openModal('SHOBITA AARAV.png', 'Shobita Aarav', 'Accounting Executive', 'accounting')">View Resume</button>
+            <button class="compare-btn" onclick="addToComparison('Shobita Aarav')">Compare</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="candidate-card" data-position="accounting">
+        <img src="PARVATHY PRABHU.png" alt="Parvathy Prabhu" class="candidate-image" onclick="openModal('PARVATHY PRABHU.png', 'Parvathy Prabhu', 'Accounting Executive', 'accounting')">
+        <div class="candidate-info">
+          <h3 class="candidate-name">Parvathy Prabhu</h3>
+          <p class="candidate-position">Accounting Executive</p>
+          <div class="candidate-skills">
+            <span class="skill-tag">Payroll Management</span>
+            <span class="skill-tag">Audit Support</span>
+            <span class="skill-tag">Process Improvement</span>
+          </div>
+          <div class="action-buttons">
+            <button class="view-btn" onclick="openModal('PARVATHY PRABHU.png', 'Parvathy Prabhu', 'Accounting Executive', 'accounting')">View Resume</button>
+            <button class="compare-btn" onclick="addToComparison('Parvathy Prabhu')">Compare</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="candidate-card" data-position="accounting">
+        <img src="RAHUL ABRAHAM.png" alt="Rahul Abraham" class="candidate-image" onclick="openModal('RAHUL ABRAHAM.png', 'Rahul Abraham', 'Accounting Executive', 'accounting')">
+        <div class="candidate-info">
+          <h3 class="candidate-name">Rahul Abraham</h3>
+          <p class="candidate-position">Accounting Executive</p>
+          <div class="candidate-skills">
+            <span class="skill-tag">Financial Documentation</span>
+            <span class="skill-tag">Tally</span>
+            <span class="skill-tag">Compliance</span>
+          </div>
+          <div class="action-buttons">
+            <button class="view-btn" onclick="openModal('RAHUL ABRAHAM.png', 'Rahul Abraham', 'Accounting Executive', 'accounting')">View Resume</button>
+            <button class="compare-btn" onclick="addToComparison('Rahul Abraham')">Compare</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- FP&A Candidates -->
+      <div class="candidate-card" data-position="fpa">
+        <img src="MICHAEL MORONNE.png" alt="Michael Moronne" class="candidate-image" onclick="openModal('MICHAEL MORONNE.png', 'Michael Moronne', 'FP&A Analyst', 'fpa')">
+        <div class="candidate-info">
+          <h3 class="candidate-name">Michael Moronne</h3>
+          <p class="candidate-position">FP&A Analyst</p>
+          <div class="candidate-skills">
+            <span class="skill-tag">Financial Modeling</span>
+            <span class="skill-tag">Power BI</span>
+            <span class="skill-tag">Strategic Planning</span>
+          </div>
+          <div class="action-buttons">
+            <button class="view-btn" onclick="openModal('MICHAEL MORONNE.png', 'Michael Moronne', 'FP&A Analyst', 'fpa')">View Resume</button>
+            <button class="compare-btn" onclick="addToComparison('Michael Moronne')">Compare</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="candidate-card" data-position="fpa">
+        <img src="JEREMY FISHER.png" alt="Jeremy Fisher" class="candidate-image" onclick="openModal('JEREMY FISHER.png', 'Jeremy Fisher', 'FP&A Analyst', 'fpa')">
+        <div class="candidate-info">
+          <h3 class="candidate-name">Jeremy Fisher</h3>
+          <p class="candidate-position">FP&A Analyst</p>
+          <div class="candidate-skills">
+            <span class="skill-tag">Forecasting</span>
+            <span class="skill-tag">Business Intelligence</span>
+            <span class="skill-tag">Data Analysis</span>
+          </div>
+          <div class="action-buttons">
+            <button class="view-btn" onclick="openModal('JEREMY FISHER.png', 'Jeremy Fisher', 'FP&A Analyst', 'fpa')">View Resume</button>
+            <button class="compare-btn" onclick="addToComparison('Jeremy Fisher')">Compare</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="candidate-card" data-position="fpa">
+        <img src="ETHAN SAMUEL.png" alt="Ethan Samuel" class="candidate-image" onclick="openModal('ETHAN SAMUEL.png', 'Ethan Samuel', 'FP&A Analyst', 'fpa')">
+        <div class="candidate-info">
+          <h3 class="candidate-name">Ethan Samuel</h3>
+          <p class="candidate-position">FP&A Analyst</p>
+          <div class="candidate-skills">
+            <span class="skill-tag">Budgeting</span>
+            <span class="skill-tag">Performance Metrics</span>
+            <span class="skill-tag">Risk Analysis</span>
+          </div>
+          <div class="action-buttons">
+            <button class="view-btn" onclick="openModal('ETHAN SAMUEL.png', 'Ethan Samuel', 'FP&A Analyst', 'fpa')">View Resume</button>
+            <button class="compare-btn" onclick="addToComparison('Ethan Samuel')">Compare</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="candidate-card" data-position="fpa">
+        <img src="IMMANUEL DANIEL.png" alt="Immanuel Daniel" class="candidate-image" onclick="openModal('IMMANUEL DANIEL.png', 'Immanuel Daniel', 'FP&A Analyst', 'fpa')">
+        <div class="candidate-info">
+          <h3 class="candidate-name">Immanuel Daniel</h3>
+          <p class="candidate-position">FP&A Analyst</p>
+          <div class="candidate-skills">
+            <span class="skill-tag">Cost Control</span>
+            <span class="skill-tag">Business Strategy</span>
+            <span class="skill-tag">Financial Optimization</span>
+          </div>
+          <div class="action-buttons">
+            <button class="view-btn" onclick="openModal('IMMANUEL DANIEL.png', 'Immanuel Daniel', 'FP&A Analyst', 'fpa')">View Resume</button>
+            <button class="compare-btn" onclick="addToComparison('Immanuel Daniel')">Compare</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button id="compareSelectedBtn" style="display: none; margin-bottom: 30px; padding: 12px 25px; background-color: var(--finance-color); color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer;" onclick="openComparisonModal()">
+      Compare Selected Candidates (2)
+    </button>
+  </div>
+
+  <!-- Resume View Modal -->
+  <div id="resumeModal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeModal()">&times;</span>
+      <div class="modal-header">
+        <h2 id="modalCandidateName"></h2>
+        <p id="modalCandidatePosition" style="color: var(--finance-color); font-weight: bold;"></p>
+      </div>
+      <div class="modal-body">
+        <img id="modalResumeImage" src="" alt="Candidate Resume" style="width: 100%;">
+        <div class="jd-section" id="jdContent">
+          <!-- Job description will be inserted here by JavaScript -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Comparison Modal -->
+  <div id="comparisonModal" class="comparison-modal">
+    <div class="comparison-content">
+      <span class="close-modal" onclick="closeComparisonModal()">&times;</span>
+      <h2 style="color: var(--primary); text-align: center; margin-bottom: 20px;">Candidate Comparison</h2>
+      
+      <div class="comparison-grid" id="comparisonGrid">
+        <!-- Comparison content will be inserted here by JavaScript -->
+      </div>
+      
+      <div style="margin-top: 30px; text-align: center;">
+        <button onclick="closeComparisonModal()" style="padding: 10px 20px; background-color: var(--secondary); color: white; border: none; border-radius: 5px; cursor: pointer;">Close Comparison</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2024 Zenithor Energy Solutions. All Rights Reserved.</p>
+  </footer>
+
+  <script>
+    // Job Descriptions
+    const jobDescriptions = {
+      'team-lead': {
+        title: 'Finance Team Lead',
+        description: `
+          <h3>Job Title: Finance Team Lead</h3>
+          <p><strong>Department:</strong> Finance</p>
+          <p><strong>Reports To:</strong> Finance Manager</p>
+          <p><strong>Job Type:</strong> Full-time</p>
+          <h4>Job Summary:</h4>
+          <p>The Finance Team Lead will oversee financial reporting, budgeting, and cost management for the department. This role includes team leadership and ensuring compliance with financial regulations while optimizing internal processes.</p>
+          <h4>Key Responsibilities:</h4>
+          <ul>
+            <li>Lead financial analysis, forecasting, and budgeting activities.</li>
+            <li>Supervise the finance team and provide mentorship.</li>
+            <li>Ensure compliance with regulatory standards and manage audits.</li>
+            <li>Identify and implement cost-saving initiatives.</li>
+            <li>Collaborate with cross-departmental teams on financial matters.</li>
+          </ul>
+          <h4>Required Skills and Competencies:</h4>
+          <ul>
+            <li>Strong financial analysis and forecasting skills.</li>
+            <li>Proficiency in financial software and ERP systems.</li>
+            <li>Leadership and team management abilities.</li>
+          </ul>
+          <h4>Qualifications:</h4>
+          <ul>
+            <li>Bachelor's degree in Finance, Accounting, or related field.</li>
+            <li>5+ years of experience in finance, with at least 2 years in a leadership role.</li>
+          </ul>
+          <h4>Performance Metrics:</h4>
+          <ul>
+            <li>Accuracy in financial reporting and compliance.</li>
+            <li>Cost savings and optimization initiatives.</li>
+          </ul>
+        `
+      },
+      'analyst': {
+        title: 'Financial Analyst',
+        description: `
+          <h3>Job Title: Financial Analyst</h3>
+          <p><strong>Department:</strong> Finance</p>
+          <p><strong>Reports To:</strong> Finance Manager</p>
+          <p><strong>Job Type:</strong> Full-time</p>
+          <h4>Job Summary:</h4>
+          <p>The Finance Analyst will support budgeting, forecasting, and financial modeling efforts, providing key data and insights to assist in financial decision-making. This role focuses on identifying trends and offering actionable financial recommendations.</p>
+          <h4>Key Responsibilities:</h4>
+          <ul>
+            <li>Prepare and analyze financial reports and forecasts.</li>
+            <li>Support budgeting and financial planning activities.</li>
+            <li>Conduct cost-benefit analysis and financial modeling.</li>
+            <li>Monitor financial performance and prepare variance analysis.</li>
+            <li>Provide recommendations for optimizing financial processes and reducing costs.</li>
+          </ul>
+          <h4>Required Skills and Competencies:</h4>
+          <ul>
+            <li>Expertise in financial modeling, Excel, and data analysis.</li>
+            <li>Strong attention to detail and ability to interpret complex financial data.</li>
+            <li>Ability to communicate findings effectively to senior management.</li>
+          </ul>
+          <h4>Qualifications:</h4>
+          <ul>
+            <li>Bachelor's degree in Finance, Economics, or related field.</li>
+            <li>2+ years of experience in financial analysis.</li>
+          </ul>
+          <h4>Performance Metrics:</h4>
+          <ul>
+            <li>Accuracy of financial reports and forecasts.</li>
+            <li>Efficiency improvements in financial processes.</li>
+          </ul>
+        `
+      },
+      'fpa': {
+        title: 'Financial Planning & Analysis Analyst',
+        description: `
+          <h3>Job Title: Financial Planning & Analysis Analyst</h3>
+          <p><strong>Department:</strong> Finance</p>
+          <p><strong>Reports To:</strong> FP&A Manager</p>
+          <p><strong>Job Type:</strong> Full-time</p>
+          <h4>Job Summary:</h4>
+          <p>The FP&A Analyst will focus on improving forecasting accuracy, developing financial models, and supporting business decision-making through data-driven insights. This role involves collaboration with various departments to align financial planning with business strategy.</p>
+          <h4>Key Responsibilities:</h4>
+          <ul>
+            <li>Develop and maintain financial models and forecasting tools.</li>
+            <li>Support strategic planning and budgeting processes.</li>
+            <li>Provide detailed financial analysis to support key business decisions.</li>
+            <li>Monitor and report on financial performance, highlighting risks and opportunities.</li>
+            <li>Collaborate with department heads to refine business plans and forecasts.</li>
+          </ul>
+          <h4>Required Skills and Competencies:</h4>
+          <ul>
+            <li>Advanced proficiency in Excel, Power BI, and financial modeling.</li>
+            <li>Strong analytical and problem-solving abilities.</li>
+            <li>Effective communication skills and experience working with senior management.</li>
+          </ul>
+          <h4>Qualifications:</h4>
+          <ul>
+            <li>Bachelor's degree in Finance, Accounting, or related field.</li>
+            <li>3+ years of experience in financial planning, analysis, or related fields.</li>
+          </ul>
+          <h4>Performance Metrics:</h4>
+          <ul>
+            <li>Forecasting accuracy and timely reporting.</li>
+            <li>Contributions to cost control and financial optimization efforts.</li>
+          </ul>
+        `
+      },
+      'accounting': {
+        title: 'Accounting Executive',
+        description: `
+          <h3>Job Title: Accounting Executive</h3>
+          <p><strong>Department:</strong> Accounting</p>
+          <p><strong>Reports To:</strong> Senior Accountant</p>
+          <p><strong>Job Type:</strong> Full-time</p>
+          <h4>Job Summary:</h4>
+          <p>The Accounting Executive will handle accounts reconciliation, tax compliance, and financial reporting. This position requires a strong focus on detail and accuracy to ensure smooth accounting operations.</p>
+          <h4>Key Responsibilities:</h4>
+          <ul>
+            <li>Perform accounts reconciliation and resolve discrepancies.</li>
+            <li>Prepare financial reports and support month-end closing.</li>
+            <li>Ensure compliance with tax laws and payroll management.</li>
+            <li>Support auditing and financial documentation processes.</li>
+            <li>Assist in implementing process improvements for accounting workflows.</li>
+          </ul>
+          <h4>Required Skills and Competencies:</h4>
+          <ul>
+            <li>Proficiency in accounting software (QuickBooks, Tally, SAP).</li>
+            <li>Strong attention to detail and organizational skills.</li>
+            <li>Basic understanding of financial reporting and compliance.</li>
+          </ul>
+          <h4>Qualifications:</h4>
+          <ul>
+            <li>Bachelor's degree in Accounting, Finance, or related field.</li>
+            <li>2+ years of experience in accounting.</li>
+          </ul>
+          <h4>Performance Metrics:</h4>
+          <ul>
+            <li>Accuracy in reconciliations and reporting.</li>
+            <li>Efficiency improvements in accounting processes.</li>
+          </ul>
+        `
+      }
+    };
+
+    // Filter candidates by position
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    filterButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        filterButtons.forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+        
+        const filter = button.getAttribute('data-filter');
+        const candidates = document.querySelectorAll('.candidate-card');
+        
+        candidates.forEach(candidate => {
+          if (filter === 'all' || candidate.getAttribute('data-position') === filter) {
+            candidate.style.display = 'block';
+          } else {
+            candidate.style.display = 'none';
+          }
+        });
+      });
+    });
+    
+    // Search functionality
+    const searchBox = document.querySelector('.search-box');
+    searchBox.addEventListener('input', () => {
+      const searchTerm = searchBox.value.toLowerCase();
+      const candidates = document.querySelectorAll('.candidate-card');
+      
+      candidates.forEach(candidate => {
+        const name = candidate.querySelector('.candidate-name').textContent.toLowerCase();
+        const position = candidate.querySelector('.candidate-position').textContent.toLowerCase();
+        const skills = candidate.querySelector('.candidate-skills').textContent.toLowerCase();
+        
+        if (name.includes(searchTerm) || position.includes(searchTerm) || skills.includes(searchTerm)) {
+          candidate.style.display = 'block';
+        } else {
+          candidate.style.display = 'none';
+        }
+      });
+    });
+    
+    // Modal functionality
+    function openModal(imageSrc, name, position, roleType) {
+      const modal = document.getElementById('resumeModal');
+      const modalImage = document.getElementById('modalResumeImage');
+      const modalName = document.getElementById('modalCandidateName');
+      const modalPosition = document.getElementById('modalCandidatePosition');
+      const jdContent = document.getElementById('jdContent');
+      
+      modalImage.src = imageSrc;
+      modalName.textContent = name;
+      modalPosition.textContent = position;
+      
+      // Insert job description
+      if (jobDescriptions[roleType]) {
+        jdContent.innerHTML = jobDescriptions[roleType].description;
+      } else {
+        jdContent.innerHTML = '<p>No job description available for this position.</p>';
+      }
+      
+      modal.style.display = 'block';
+      document.body.style.overflow = 'hidden';
+    }
+    
+    function closeModal() {
+      document.getElementById('resumeModal').style.display = 'none';
+      document.body.style.overflow = 'auto';
+    }
+    
+    // Close modal when clicking outside content
+    window.onclick = function(event) {
+      const modal = document.getElementById('resumeModal');
+      if (event.target == modal) {
+        closeModal();
+      }
+    };
+    
+    // Comparison functionality
+    let selectedCandidates = [];
+    const compareSelectedBtn = document.getElementById('compareSelectedBtn');
+    
+    function addToComparison(candidateName) {
+      const candidateCards = document.querySelectorAll('.candidate-card');
+      let candidateCard = null;
+      
+      for (let card of candidateCards) {
+        if (card.querySelector('.candidate-name').textContent === candidateName) {
+          candidateCard = card;
+          break;
+        }
+      }
+      
+      if (!candidateCard) return;
+
+      const candidateImage = candidateCard.querySelector('.candidate-image').src;
+      const candidatePosition = candidateCard.querySelector('.candidate-position').textContent;
+      const candidateSkills = Array.from(candidateCard.querySelectorAll('.skill-tag')).map(tag => tag.textContent);
+      
+      const candidateIndex = selectedCandidates.findIndex(c => c.name === candidateName);
+      const compareBtn = candidateCard.querySelector('.compare-btn');
+      
+      if (candidateIndex === -1) {
+        if (selectedCandidates.length < 2) {
+          selectedCandidates.push({
+            name: candidateName,
+            image: candidateImage,
+            position: candidatePosition,
+            skills: candidateSkills
+          });
+          
+          compareBtn.classList.add('active');
+          updateCompareButton();
+        } else {
+          alert('You can compare up to 2 candidates at a time.');
+        }
+      } else {
+        selectedCandidates.splice(candidateIndex, 1);
+        compareBtn.classList.remove('active');
+        updateCompareButton();
+      }
+    }
+
+    function updateCompareButton() {
+      if (selectedCandidates.length > 0) {
+        compareSelectedBtn.textContent = `Compare Selected Candidates (${selectedCandidates.length})`;
+        compareSelectedBtn.style.display = 'block';
+      } else {
+        compareSelectedBtn.style.display = 'none';
+      }
+    }
+
+    function openComparisonModal() {
+      if (selectedCandidates.length < 2) {
+        alert('Please select 2 candidates to compare.');
+        return;
+      }
+      
+      const comparisonGrid = document.getElementById('comparisonGrid');
+      comparisonGrid.innerHTML = '';
+      
+      selectedCandidates.forEach(candidate => {
+        const comparisonCandidate = document.createElement('div');
+        comparisonCandidate.className = 'comparison-candidate';
+        
+        comparisonCandidate.innerHTML = `
+          <div class="comparison-header">
+            <img src="${candidate.image}" alt="${candidate.name}" class="comparison-image">
+            <div>
+              <h3 class="comparison-name">${candidate.name}</h3>
+              <p class="comparison-position">${candidate.position}</p>
+            </div>
+          </div>
+          
+          <table class="comparison-table">
+            <tr>
+              <th colspan="2">Skills</th>
+            </tr>
+            ${candidate.skills.map(skill => `
+              <tr>
+                <td>${skill}</td>
+                <td>
+                  <i class="fas fa-check" style="color: #4CAF50;"></i>
+                </td>
+              </tr>
+            `).join('')}
+          </table>
+        `;
+        
+        comparisonGrid.appendChild(comparisonCandidate);
+      });
+      
+      document.getElementById('comparisonModal').style.display = 'block';
+      document.body.style.overflow = 'hidden';
+    }
+    
+    function closeComparisonModal() {
+      document.getElementById('comparisonModal').style.display = 'none';
+      document.body.style.overflow = 'auto';
+    }
+  </script>
+</body>
+</html>

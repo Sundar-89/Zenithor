@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zenithor - Marketing Recruitment Portal</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #004b6b;
+      --secondary: #0077a1;
+      --accent: #00c2ff;
+      --light: #f4f8fb;
+      --dark: #003b56;
+      --marketing-color: #2E7D32; /* Changed from orange to green */
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f5f5;
+      color: #333;
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      color: white;
+      padding: 5px;
+      text-align: center;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 10px;
+    }
+
+    .logo {
+      height: 100px;
+      margin-right: 15px;
+    }
+
+    .header-content h1 {
+      margin: 0;
+      font-size: 2.5rem;
+      color: white;
+    }
+
+    .header-content p {
+      margin: 5px 0 0;
+      font-size: 1.2rem;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .filter-section {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 25px;
+      background-color: white;
+      color: var(--marketing-color);
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      border: 2px solid var(--marketing-color);
+    }
+
+    .filter-btn:hover, .filter-btn.active {
+      background-color: var(--marketing-color);
+      color: white;
+    }
+
+    .search-box {
+      padding: 10px 15px;
+      border-radius: 25px;
+      border: 1px solid #ddd;
+      min-width: 250px;
+      font-size: 1rem;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .candidates-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+      width: 100%;
+      margin-bottom: 30px;
+    }
+
+    .candidate-card {
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s, box-shadow 0.3s;
+      border-top: 4px solid var(--marketing-color);
+    }
+
+    .candidate-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .candidate-image {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      cursor: pointer;
+    }
+
+    .candidate-info {
+      padding: 15px;
+    }
+
+    .candidate-name {
+      font-size: 1.3rem;
+      margin: 0 0 5px;
+      color: var(--primary);
+    }
+
+    .candidate-position {
+      color: var(--marketing-color);
+      font-weight: bold;
+      margin-bottom: 10px;
+      font-size: 0.9rem;
+    }
+
+    .candidate-skills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-bottom: 15px;
+    }
+
+    .skill-tag {
+      background-color: #e6f7ff;
+      color: var(--secondary);
+      padding: 3px 10px;
+      border-radius: 15px;
+      font-size: 0.8rem;
+    }
+
+    .action-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 15px;
+    }
+
+    .view-btn, .compare-btn {
+      padding: 8px 15px;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .view-btn {
+      background-color: var(--secondary);
+      color: white;
+    }
+
+    .view-btn:hover {
+      background-color: var(--primary);
+    }
+
+    .compare-btn {
+      background-color: white;
+      color: var(--secondary);
+      border: 1px solid var(--secondary);
+    }
+
+    .compare-btn:hover {
+      background-color: #e6f7ff;
+    }
+
+    /* Modal styling */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      overflow: auto;
+    }
+
+    .modal-content {
+      background-color: white;
+      margin: 5% auto;
+      padding: 20px;
+      border-radius: 10px;
+      width: 80%;
+      max-width: 900px;
+      max-height: 80vh;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .close-modal {
+      position: absolute;
+      top: 15px;
+      right: 25px;
+      color: #aaa;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close-modal:hover {
+      color: var(--primary);
+    }
+
+    .modal-header {
+      border-bottom: 1px solid #eee;
+      padding-bottom: 15px;
+      margin-bottom: 15px;
+    }
+
+    .modal-body {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .resume-section {
+      margin-bottom: 20px;
+    }
+
+    .resume-section h3 {
+      color: var(--primary);
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 5px;
+      display: inline-block;
+    }
+
+    .jd-section {
+      background-color: #f9f9f9;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 20px;
+    }
+
+    .jd-section h3 {
+      color: var(--marketing-color);
+      margin-top: 0;
+    }
+
+    .jd-section ul {
+      padding-left: 20px;
+    }
+
+    .jd-section li {
+      margin-bottom: 8px;
+    }
+
+    .comparison-modal {
+      display: none;
+      position: fixed;
+      z-index: 1001;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.9);
+      overflow: auto;
+    }
+
+    .comparison-content {
+      background-color: white;
+      margin: 2% auto;
+      padding: 20px;
+      border-radius: 10px;
+      width: 95%;
+      max-width: 1400px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .comparison-candidate {
+      border: 1px solid #eee;
+      padding: 15px;
+      border-radius: 8px;
+    }
+
+    .comparison-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+    }
+
+    .comparison-image {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 50%;
+      margin-right: 15px;
+    }
+
+    .comparison-name {
+      font-size: 1.3rem;
+      color: var(--primary);
+      margin: 0;
+    }
+
+    .comparison-position {
+      color: var(--marketing-color);
+      font-weight: bold;
+      margin: 5px 0;
+    }
+
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    .comparison-table th, .comparison-table td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+
+    .comparison-table th {
+      background-color: #f5f5f5;
+      color: var(--primary);
+    }
+
+    .highlight {
+      background-color: #fffde7;
+      font-weight: bold;
+    }
+
+    footer {
+      background-color: var(--dark);
+      color: white;
+      text-align: center;
+      padding: 20px;
+      margin-top: auto;
+    }
+
+    .compare-btn.active {
+      background-color: #e6f7ff !important;
+      border: 2px solid var(--secondary) !important;
+    }
+
+    @media (max-width: 768px) {
+      .controls {
+        flex-direction: column;
+      }
+      
+      .filter-section {
+        justify-content: center;
+      }
+      
+      .search-box {
+        width: 100%;
+      }
+      
+      .candidates-container {
+        grid-template-columns: 1fr;
+      }
+      
+      .modal-content {
+        width: 95%;
+        margin: 10% auto;
+      }
+      
+      .comparison-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo-container">
+      <img src="logo.svg" alt="Zenithor Logo" class="logo">
+      <div class="header-csontent">
+        <h1>Marketing Recruitment Portal</h1>
+        <p>Find the best marketing talent for Zenithor's growth</p>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="controls">
+      <div class="filter-section">
+        <button class="filter-btn active" data-filter="all">All Candidates</button>
+        <button class="filter-btn" data-filter="team-lead">Team Lead</button>
+        <button class="filter-btn" data-filter="manager">Manager</button>
+        <button class="filter-btn" data-filter="specialist">Specialist</button>
+        <button class="filter-btn" data-filter="associate">Associate</button>
+      </div>
+      <input type="text" class="search-box" placeholder="Search candidates...">
+    </div>
+
+    <div class="candidates-container">
+      <!-- Team Lead Candidates -->
+      <div class="candidate-card" data-position="team-lead">
+        <img src="GALWIN THEO.png" alt="Galwin Theo" class="candidate-image" onclick="openModal('GALWIN THEO.png', 'Galwin Theo', 'Marketing Team Lead', 'team-lead')">
+        <div class="candidate-info">
+          <h3 class="candidate-name">Galwin Theo</h3>
+          <p class="candidate-position">Marketing Team Lead</p>
+          <div class="candidate-skills">
+            <span class="skill-tag">Strategic Planning</span>
+            <span class="skill-tag">Team Leadership</span>
+            <span class="skill-tag">Campaign Management</span>
+          </div>
+          <div class="action-buttons">
+            <button class="view-btn" onclick="openModal('GALWIN THEO.png', 'Galwin Theo', 'Marketing Team Lead', 'team-lead')">View Resume</button>
+            <button class="compare-btn" onclick="addToComparison('Galwin Theo')">Compare</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="candidate-card" data-position="team-lead">
+        <img src="DANITA HAVION.png" alt="Danita Havion" class="candidate-image" onclick="openModal('DANITA HAVION.png', 'Danita Havion', 'Marketing Team Lead', 'team-lead')">
+        <div class="candidate-info">
+          <h3 class="candidate-name">Danita Havion</h3>
+          <p class="candidate-position">Marketing Team Lead</p>
+          <div class="candidate-skills">
+            <span class="skill-tag">Brand Strategy</span>
+            <span class="skill-tag">Digital Marketing</span>
+            <span class="skill-tag">Budget Management</span>
+          </div>
+          <div class="action-buttons">
+            <button class="view-btn" onclick="openModal('DANITA HAVION.png', 'Danita Havion', 'Marketing Team Lead', 'team-lead')">View Resume</button>
+            <button class="compare-btn" onclick="addToComparison('Danita Havion')">Compare</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="candidate-card" data-position="team-lead">
+        <img src="ATARAH.png" alt="Atarah" class="candidate-image" onclick="openModal('ATARAH.png', 'Atarah', 'Marketing Team Lead', 'team-lead')">
+        <div class="candidate-info">
+          <h3 class="candidate-name">Atarah</h3>
+          <p class="candidate-position">Marketing Team Lead</p>
+          <div class="candidate-skills">
+            <span class="skill-tag">Content Strategy</span>
+            <span class="skill-tag">Social Media</span>
+            <span class="skill-tag">Analytics</span>
+          </div>
+          <div class="action-buttons">
+            <button class="view-btn" onclick="openModal('ATARAH.png', 'Atarah', 'Marketing Team Lead', 'team-lead')">View Resume</button>
+            <button class="compare-btn" onclick="addToComparison('Atarah')">Compare</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="candidate-card" data-position="team-lead">
+        <img src="AJAY JOSEPH.png" alt="Ajay Joseph" class="candidate-image" onclick="openModal('AJAY JOSEPH.png', 'Ajay Joseph', 'Marketing Team Lead', 'team-lead')">
+        <div class="candidate-info">
+          <h3 class="candidate-name">Ajay Joseph</h3>
+          <p class="candidate-position">Marketing Team Lead</p>
+          <div class="candidate-skills">
+            <span class="skill-tag">Market Research</span>
+            <span class="skill-tag">Product Marketing</span>
+            <span class="skill-tag">CRM</span>
+          </div>
+          <div class="action-buttons">
+            <button class="view-btn" onclick="openModal('AJAY JOSEPH.png', 'Ajay Joseph', 'Marketing Team Lead', 'team-lead')">View Resume</button>
+            <button class="compare-btn" onclick="addToComparison('Ajay Joseph')">Compare</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Marketing Manager Candidates -->
+      <div class="candidate-card" data-position="manager">
+        <img src="SAHRIQ.png" alt="Sahriq" class="candidate-image" onclick="openModal('SAHRIQ.png', 'Sahriq', 'Marketing Manager', 'manager')">
+        <div class="candidate-info">
+          <h3 class="candidate-name">Sahriq</h3>
+          <p class="candidate-position">Marketing Manager</p>
+          <div class="candidate-skills">
+            <span class="skill-tag">Campaign Execution</span>
+            <span class="skill-tag">SEO/SEM</span>
+            <span class="skill-tag">Content Creation</span>
+          </div>
+          <div class="action-buttons">
+            <button class="view-btn" onclick="openModal('SAHRIQ.png', 'Sahriq', 'Marketing Manager', 'manager')">View Resume</button>
+            <button class="compare-btn" onclick="addToComparison('Sahriq')">Compare</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="candidate-card" data-position="manager">
+        <img src="GLADYS.png" alt="Gladys" class="candidate-image" onclick="openModal('GLADYS.png', 'Gladys', 'Marketing Manager', 'manager')">
+        <div class="candidate-info">
+          <h3 class="candidate-name">Gladys</h3>
+          <p class="candidate-position">Marketing Manager</p>
+          <div class="candidate-skills">
+            <span class="skill-tag">Email Marketing</span>
+            <span class="skill-tag">Automation</span>
+            <span class="skill-tag">Lead Generation</span>
+          </div>
+          <div class="action-buttons">
+            <button class="view-btn" onclick="openModal('GLADYS.png', 'Gladys', 'Marketing Manager', 'manager')">View Resume</button>
+            <button class="compare-btn" onclick="addToComparison('Gladys')">Compare</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="candidate-card" data-position="manager">
+        <img src="AKSHIN.png" alt="Akshin" class="candidate-image" onclick="openModal('AKSHIN.png', 'Akshin', 'Marketing Manager', 'manager')">
+        <div class="candidate-info">
+          <h3 class="candidate-name">Akshin</h3>
+          <p class="candidate-position">Marketing Manager</p>
+          <div class="candidate-skills">
+            <span class="skill-tag">PPC Advertising</span>
+            <span class="skill-tag">Conversion Optimization</span>
+            <span class="skill-tag">A/B Testing</span>
+          </div>
+          <div class="action-buttons">
+            <button class="view-btn" onclick="openModal('AKSHIN.png', 'Akshin', 'Marketing Manager', 'manager')">View Resume</button>
+            <button class="compare-btn" onclick="addToComparison('Akshin')">Compare</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="candidate-card" data-position="manager">
+        <img src="DHANUSH.png" alt="Dhanush" class="candidate-image" onclick="openModal('DHANUSH.png', 'Dhanush', 'Marketing Manager', 'manager')">
+        <div class="candidate-info">
+          <h3 class="candidate-name">Dhanush</h3>
+          <p class="candidate-position">Marketing Manager</p>
+          <div class="candidate-skills">
+            <span class="skill-tag">Social Media</span>
+            <span class="skill-tag">Influencer Marketing</span>
+            <span class="skill-tag">Community Building</span>
+          </div>
+          <div class="action-buttons">
+            <button class="view-btn" onclick="openModal('DHANUSH.png', 'Dhanush', 'Marketing Manager', 'manager')">View Resume</button>
+            <button class="compare-btn" onclick="addToComparison('Dhanush')">Compare</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product Marketing Specialist Candidates -->
+      <div class="candidate-card" data-position="specialist">
+        <img src="ARJUN.png" alt="Arjun" class="candidate-image" onclick="openModal('ARJUN.png', 'Arjun', 'Product Marketing Specialist', 'specialist')">
+        <div class="candidate-info">
+          <h3 class="candidate-name">Arjun</h3>
+          <p class="candidate-position">Product Marketing Specialist</p>
+          <div class="candidate-skills">
+            <span class="skill-tag">Product Positioning</span>
+            <span class="skill-tag">Go-to-Market</span>
+            <span class="skill-tag">Competitive Analysis</span>
+          </div>
+          <div class="action-buttons">
+            <button class="view-btn" onclick="openModal('ARJUN.png', 'Arjun', 'Product Marketing Specialist', 'specialist')">View Resume</button>
+            <button class="compare-btn" onclick="addToComparison('Arjun')">Compare</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="candidate-card" data-position="specialist">
+        <img src="VIJAY.png" alt="Vijay" class="candidate-image" onclick="openModal('VIJAY.png', 'Vijay', 'Product Marketing Specialist', 'specialist')">
+        <div class="candidate-info">
+          <h3 class="candidate-name">Vijay</h3>
+          <p class="candidate-position">Product Marketing Specialist</p>
+          <div class="candidate-skills">
+            <span class="skill-tag">Messaging</span>
+            <span class="skill-tag">Sales Enablement</span>
+            <span class="skill-tag">Customer Insights</span>
+          </div>
+          <div class="action-buttons">
+            <button class="view-btn" onclick="openModal('VIJAY.png', 'Vijay', 'Product Marketing Specialist', 'specialist')">View Resume</button>
+            <button class="compare-btn" onclick="addToComparison('Vijay')">Compare</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="candidate-card" data-position="specialist">
+        <img src="SURYA.png" alt="Surya" class="candidate-image" onclick="openModal('SURYA.png', 'Surya', 'Product Marketing Specialist', 'specialist')">
+        <div class="candidate-info">
+          <h3 class="candidate-name">Surya</h3>
+          <p class="candidate-position">Product Marketing Specialist</p>
+          <div class="candidate-skills">
+            <span class="skill-tag">Content Development</span>
+            <span class="skill-tag">Case Studies</span>
+            <span class="skill-tag">Webinars</span>
+          </div>
+          <div class="action-buttons">
+            <button class="view-btn" onclick="openModal('SURYA.png', 'Surya', 'Product Marketing Specialist', 'specialist')">View Resume</button>
+            <button class="compare-btn" onclick="addToComparison('Surya')">Compare</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="candidate-card" data-position="specialist">
+        <img src="JENIFER.png" alt="Jenifer" class="candidate-image" onclick="openModal('JENIFER.png', 'Jenifer', 'Product Marketing Specialist', 'specialist')">
+        <div class="candidate-info">
+          <h3 class="candidate-name">Jenifer</h3>
+          <p class="candidate-position">Product Marketing Specialist</p>
+          <div class="candidate-skills">
+            <span class="skill-tag">Product Launches</span>
+            <span class="skill-tag">Customer Advocacy</span>
+            <span class="skill-tag">ROI Analysis</span>
+          </div>
+          <div class="action-buttons">
+            <button class="view-btn" onclick="openModal('JENIFER.png', 'Jenifer', 'Product Marketing Specialist', 'specialist')">View Resume</button>
+            <button class="compare-btn" onclick="addToComparison('Jenifer')">Compare</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Business Development Associate Candidates -->
+      <div class="candidate-card" data-position="associate">
+        <img src="AGUSTIN.png" alt="Agustin" class="candidate-image" onclick="openModal('AGUSTIN.png', 'Agustin', 'Business Development Associate', 'associate')">
+        <div class="candidate-info">
+          <h3 class="candidate-name">Agustin</h3>
+          <p class="candidate-position">Business Development Associate</p>
+          <div class="candidate-skills">
+            <span class="skill-tag">Lead Prospecting</span>
+            <span class="skill-tag">CRM Management</span>
+            <span class="skill-tag">Outreach</span>
+          </div>
+          <div class="action-buttons">
+            <button class="view-btn" onclick="openModal('AGUSTIN.png', 'Agustin', 'Business Development Associate', 'associate')">View Resume</button>
+            <button class="compare-btn" onclick="addToComparison('Agustin')">Compare</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="candidate-card" data-position="associate">
+        <img src="CHARLES.png" alt="Charles" class="candidate-image" onclick="openModal('CHARLES.png', 'Charles', 'Business Development Associate', 'associate')">
+        <div class="candidate-info">
+          <h3 class="candidate-name">Charles</h3>
+          <p class="candidate-position">Business Development Associate</p>
+          <div class="candidate-skills">
+            <span class="skill-tag">Partnership Development</span>
+            <span class="skill-tag">Market Research</span>
+            <span class="skill-tag">Pitch Decks</span>
+          </div>
+          <div class="action-buttons">
+            <button class="view-btn" onclick="openModal('CHARLES.png', 'Charles', 'Business Development Associate', 'associate')">View Resume</button>
+            <button class="compare-btn" onclick="addToComparison('Charles')">Compare</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="candidate-card" data-position="associate">
+        <img src="GEORGIA.png" alt="Georgia" class="candidate-image" onclick="openModal('GEORGIA.png', 'Georgia', 'Business Development Associate', 'associate')">
+        <div class="candidate-info">
+          <h3 class="candidate-name">Georgia</h3>
+          <p class="candidate-position">Business Development Associate</p>
+          <div class="candidate-skills">
+            <span class="skill-tag">Client Meetings</span>
+            <span class="skill-tag">Negotiation</span>
+            <span class="skill-tag">Contract Management</span>
+          </div>
+          <div class="action-buttons">
+            <button class="view-btn" onclick="openModal('GEORGIA.png', 'Georgia', 'Business Development Associate', 'associate')">View Resume</button>
+            <button class="compare-btn" onclick="addToComparison('Georgia')">Compare</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="candidate-card" data-position="associate">
+        <img src="LYDIA SAMUEL.png" alt="Lydia Samuel" class="candidate-image" onclick="openModal('LYDIA SAMUEL.png', 'Lydia Samuel', 'Business Development Associate', 'associate')">
+        <div class="candidate-info">
+          <h3 class="candidate-name">Lydia Samuel</h3>
+          <p class="candidate-position">Business Development Associate</p>
+          <div class="candidate-skills">
+            <span class="skill-tag">Sales Pipeline</span>
+            <span class="skill-tag">Reporting</span>
+            <span class="skill-tag">Follow-up</span>
+          </div>
+          <div class="action-buttons">
+            <button class="view-btn" onclick="openModal('LYDIA SAMUEL.png', 'Lydia Samuel', 'Business Development Associate', 'associate')">View Resume</button>
+            <button class="compare-btn" onclick="addToComparison('Lydia Samuel')">Compare</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button id="compareSelectedBtn" style="display: none; margin-bottom: 30px; padding: 12px 25px; background-color: var(--marketing-color); color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer;" onclick="openComparisonModal()">
+      Compare Selected Candidates (2)
+    </button>
+  </div>
+
+  <!-- Resume View Modal -->
+  <div id="resumeModal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeModal()">&times;</span>
+      <div class="modal-header">
+        <h2 id="modalCandidateName"></h2>
+        <p id="modalCandidatePosition" style="color: var(--marketing-color); font-weight: bold;"></p>
+      </div>
+      <div class="modal-body">
+        <img id="modalResumeImage" src="" alt="Candidate Resume" style="width: 100%;">
+        <div class="jd-section" id="jdContent">
+          <!-- Job description will be inserted here by JavaScript -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Comparison Modal -->
+  <div id="comparisonModal" class="comparison-modal">
+    <div class="comparison-content">
+      <span class="close-modal" onclick="closeComparisonModal()">&times;</span>
+      <h2 style="color: var(--primary); text-align: center; margin-bottom: 20px;">Candidate Comparison</h2>
+      
+      <div class="comparison-grid" id="comparisonGrid">
+        <!-- Comparison content will be inserted here by JavaScript -->
+      </div>
+      
+      <div style="margin-top: 30px; text-align: center;">
+        <button onclick="closeComparisonModal()" style="padding: 10px 20px; background-color: var(--secondary); color: white; border: none; border-radius: 5px; cursor: pointer;">Close Comparison</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2024 Zenithor Energy Solutions. All Rights Reserved.</p>
+  </footer>
+
+  <script>
+    // Job Descriptions
+    const jobDescriptions = {
+      'team-lead': {
+        title: 'Marketing Team Lead',
+        description: `
+          <h3>Job Title: Marketing Team Lead</h3>
+          <p><strong>Department:</strong> Marketing</p>
+          <p><strong>Reports To:</strong> Marketing Manager</p>
+          <p><strong>Job Type:</strong> Full-time</p>
+          <h4>Job Summary:</h4>
+          <p>The Marketing Team Lead is responsible for driving marketing initiatives, overseeing campaign execution, and managing the marketing team to achieve business goals. This position will focus on optimizing workflows, developing innovative strategies, and increasing brand visibility.</p>
+          <h4>Key Responsibilities:</h4>
+          <ul>
+            <li>Lead the execution of cross-channel marketing campaigns.</li>
+            <li>Mentor and guide a team of marketers to achieve team objectives and professional growth.</li>
+            <li>Analyze and report on campaign performance using analytics tools such as Google Analytics and HubSpot.</li>
+            <li>Collaborate with sales, creative, and product teams to align marketing strategies with organizational goals.</li>
+            <li>Conduct training sessions to improve team skills in content creation and marketing best practices.</li>
+          </ul>
+          <h4>Required Skills and Competencies:</h4>
+          <ul>
+            <li>Proficiency in campaign strategy, execution, and analytics tools (Google Analytics, HubSpot).</li>
+            <li>Excellent leadership and team management skills.</li>
+            <li>Strong communication, negotiation, and interpersonal skills.</li>
+          </ul>
+          <h4>Qualifications:</h4>
+          <ul>
+            <li>Bachelor's degree in Marketing, Business, or related field.</li>
+            <li>3+ years of experience in marketing with at least 1 year in a leadership role.</li>
+          </ul>
+          <h4>Performance Metrics:</h4>
+          <ul>
+            <li>Increase in brand awareness and lead generation.</li>
+            <li>Improvement in team engagement and campaign ROI.</li>
+          </ul>
+        `
+      },
+      'manager': {
+        title: 'Marketing Manager',
+        description: `
+          <h3>Job Title: Marketing Manager</h3>
+          <p><strong>Department:</strong> Marketing</p>
+          <p><strong>Reports To:</strong> Senior Marketing Manager/Director</p>
+          <p><strong>Job Type:</strong> Full-time</p>
+          <h4>Job Summary:</h4>
+          <p>The Marketing Manager will oversee the execution of strategic marketing campaigns, manage budgets, and drive customer engagement efforts. This role will require cross-functional collaboration and the management of a marketing team.</p>
+          <h4>Key Responsibilities:</h4>
+          <ul>
+            <li>Manage the marketing budget and allocate resources effectively to maximize ROI.</li>
+            <li>Develop, implement, and track cross-channel marketing campaigns.</li>
+            <li>Lead market research and competitor analysis to inform strategy.</li>
+            <li>Collaborate with other departments to ensure that marketing strategies align with business objectives.</li>
+            <li>Report on campaign performance and make data-driven adjustments to optimize outcomes.</li>
+          </ul>
+          <h4>Required Skills and Competencies:</h4>
+          <ul>
+            <li>Expertise in budget planning and campaign execution.</li>
+            <li>Strong analytical and problem-solving abilities.</li>
+            <li>Excellent team leadership, project management, and communication skills.</li>
+          </ul>
+          <h4>Qualifications:</h4>
+          <ul>
+            <li>Bachelor's degree in Marketing, Business, or related field.</li>
+            <li>5+ years of experience in marketing, with at least 2 years in a managerial position.</li>
+          </ul>
+          <h4>Performance Metrics:</h4>
+          <ul>
+            <li>ROI on marketing campaigns.</li>
+            <li>Increase in customer engagement and market share.</li>
+          </ul>
+        `
+      },
+      'specialist': {
+        title: 'Product Marketing Specialist',
+        description: `
+          <h3>Job Title: Product Marketing Specialist</h3>
+          <p><strong>Department:</strong> Marketing</p>
+          <p><strong>Reports To:</strong> Product Marketing Manager</p>
+          <p><strong>Job Type:</strong> Full-time</p>
+          <h4>Job Summary:</h4>
+          <p>The Product Marketing Specialist will manage product launches, develop go-to-market strategies, and drive market positioning efforts. This position will involve collaboration with sales, R&D, and the marketing team to ensure product success.</p>
+          <h4>Key Responsibilities:</h4>
+          <ul>
+            <li>Lead product launch initiatives, ensuring market readiness and alignment with customer needs.</li>
+            <li>Conduct competitor and market analysis to refine product positioning.</li>
+            <li>Work closely with the sales and product teams to ensure cohesive messaging.</li>
+            <li>Track product performance and develop strategies to optimize market penetration.</li>
+            <li>Create and maintain product documentation, training materials, and marketing content.</li>
+          </ul>
+          <h4>Required Skills and Competencies:</h4>
+          <ul>
+            <li>Expertise in product positioning and go-to-market strategy.</li>
+            <li>Strong analytical skills and ability to interpret market data.</li>
+            <li>Proficiency in market research, customer insights, and competitive analysis.</li>
+          </ul>
+          <h4>Qualifications:</h4>
+          <ul>
+            <li>Bachelor's degree in Marketing, Business, or related field.</li>
+            <li>3+ years of experience in product marketing or related fields.</li>
+          </ul>
+          <h4>Performance Metrics:</h4>
+          <ul>
+            <li>Success of product launches and sales growth.</li>
+            <li>Market share and product positioning in targeted segments.</li>
+          </ul>
+        `
+      },
+      'associate': {
+        title: 'Business Development Associate',
+        description: `
+          <h3>Job Title: Business Development Associate</h3>
+          <p><strong>Department:</strong> Sales and Marketing</p>
+          <p><strong>Reports To:</strong> Business Development Manager</p>
+          <p><strong>Job Type:</strong> Full-time</p>
+          <h4>Job Summary:</h4>
+          <p>The Business Development Associate will focus on generating new business opportunities, managing client relationships, and driving revenue growth. This role requires a proactive approach to identifying and pursuing new leads.</p>
+          <h4>Key Responsibilities:</h4>
+          <ul>
+            <li>Identify and engage potential clients through networking, cold calling, and industry events.</li>
+            <li>Develop proposals and presentations to win new business.</li>
+            <li>Maintain relationships with existing clients to secure repeat business.</li>
+            <li>Conduct market analysis to identify new opportunities and develop targeted sales strategies.</li>
+            <li>Collaborate with the sales and marketing teams to align business development efforts with broader goals.</li>
+          </ul>
+          <h4>Required Skills and Competencies:</h4>
+          <ul>
+            <li>Strong interpersonal and communication skills.</li>
+            <li>Proficiency in lead generation and sales pipeline management.</li>
+            <li>Analytical mindset and problem-solving abilities.</li>
+          </ul>
+          <h4>Qualifications:</h4>
+          <ul>
+            <li>Bachelor's degree in Business, Marketing, or related field.</li>
+            <li>2+ years of experience in business development or sales.</li>
+          </ul>
+          <h4>Performance Metrics:</h4>
+          <ul>
+            <li>Revenue generated from new clients.</li>
+            <li>Number of leads converted to sales.</li>
+          </ul>
+        `
+      }
+    };
+
+    // Filter candidates by position
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    filterButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        filterButtons.forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+        
+        const filter = button.getAttribute('data-filter');
+        const candidates = document.querySelectorAll('.candidate-card');
+        
+        candidates.forEach(candidate => {
+          if (filter === 'all' || candidate.getAttribute('data-position') === filter) {
+            candidate.style.display = 'block';
+          } else {
+            candidate.style.display = 'none';
+          }
+        });
+      });
+    });
+    
+    // Search functionality
+    const searchBox = document.querySelector('.search-box');
+    searchBox.addEventListener('input', () => {
+      const searchTerm = searchBox.value.toLowerCase();
+      const candidates = document.querySelectorAll('.candidate-card');
+      
+      candidates.forEach(candidate => {
+        const name = candidate.querySelector('.candidate-name').textContent.toLowerCase();
+        const position = candidate.querySelector('.candidate-position').textContent.toLowerCase();
+        const skills = candidate.querySelector('.candidate-skills').textContent.toLowerCase();
+        
+        if (name.includes(searchTerm) || position.includes(searchTerm) || skills.includes(searchTerm)) {
+          candidate.style.display = 'block';
+        } else {
+          candidate.style.display = 'none';
+        }
+      });
+    });
+    
+    // Modal functionality
+    function openModal(imageSrc, name, position, roleType) {
+      const modal = document.getElementById('resumeModal');
+      const modalImage = document.getElementById('modalResumeImage');
+      const modalName = document.getElementById('modalCandidateName');
+      const modalPosition = document.getElementById('modalCandidatePosition');
+      const jdContent = document.getElementById('jdContent');
+      
+      modalImage.src = imageSrc;
+      modalName.textContent = name;
+      modalPosition.textContent = position;
+      
+      // Insert job description
+      if (jobDescriptions[roleType]) {
+        jdContent.innerHTML = jobDescriptions[roleType].description;
+      } else {
+        jdContent.innerHTML = '<p>No job description available for this position.</p>';
+      }
+      
+      modal.style.display = 'block';
+      document.body.style.overflow = 'hidden';
+    }
+    
+    function closeModal() {
+      document.getElementById('resumeModal').style.display = 'none';
+      document.body.style.overflow = 'auto';
+    }
+    
+    // Close modal when clicking outside content
+    window.onclick = function(event) {
+      const modal = document.getElementById('resumeModal');
+      if (event.target == modal) {
+        closeModal();
+      }
+    };
+    
+    // Comparison functionality
+    let selectedCandidates = [];
+    const compareSelectedBtn = document.getElementById('compareSelectedBtn');
+    
+    function addToComparison(candidateName) {
+      const candidateCards = document.querySelectorAll('.candidate-card');
+      let candidateCard = null;
+      
+      for (let card of candidateCards) {
+        if (card.querySelector('.candidate-name').textContent === candidateName) {
+          candidateCard = card;
+          break;
+        }
+      }
+      
+      if (!candidateCard) return;
+
+      const candidateImage = candidateCard.querySelector('.candidate-image').src;
+      const candidatePosition = candidateCard.querySelector('.candidate-position').textContent;
+      const candidateSkills = Array.from(candidateCard.querySelectorAll('.skill-tag')).map(tag => tag.textContent);
+      
+      const candidateIndex = selectedCandidates.findIndex(c => c.name === candidateName);
+      const compareBtn = candidateCard.querySelector('.compare-btn');
+      
+      if (candidateIndex === -1) {
+        if (selectedCandidates.length < 2) {
+          selectedCandidates.push({
+            name: candidateName,
+            image: candidateImage,
+            position: candidatePosition,
+            skills: candidateSkills
+          });
+          
+          compareBtn.classList.add('active');
+          updateCompareButton();
+        } else {
+          alert('You can compare up to 2 candidates at a time.');
+        }
+      } else {
+        selectedCandidates.splice(candidateIndex, 1);
+        compareBtn.classList.remove('active');
+        updateCompareButton();
+      }
+    }
+
+    function updateCompareButton() {
+      if (selectedCandidates.length > 0) {
+        compareSelectedBtn.textContent = `Compare Selected Candidates (${selectedCandidates.length})`;
+        compareSelectedBtn.style.display = 'block';
+      } else {
+        compareSelectedBtn.style.display = 'none';
+      }
+    }
+
+    function openComparisonModal() {
+      if (selectedCandidates.length < 2) {
+        alert('Please select 2 candidates to compare.');
+        return;
+      }
+      
+      const comparisonGrid = document.getElementById('comparisonGrid');
+      comparisonGrid.innerHTML = '';
+      
+      selectedCandidates.forEach(candidate => {
+        const comparisonCandidate = document.createElement('div');
+        comparisonCandidate.className = 'comparison-candidate';
+        
+        comparisonCandidate.innerHTML = `
+          <div class="comparison-header">
+            <img src="${candidate.image}" alt="${candidate.name}" class="comparison-image">
+            <div>
+              <h3 class="comparison-name">${candidate.name}</h3>
+              <p class="comparison-position">${candidate.position}</p>
+            </div>
+          </div>
+          
+          <table class="comparison-table">
+            <tr>
+              <th colspan="2">Skills</th>
+            </tr>
+            ${candidate.skills.map(skill => `
+              <tr>
+                <td>${skill}</td>
+                <td>
+                  <i class="fas fa-check" style="color: #4CAF50;"></i>
+                </td>
+              </tr>
+            `).join('')}
+          </table>
+        `;
+        
+        comparisonGrid.appendChild(comparisonCandidate);
+      });
+      
+      document.getElementById('comparisonModal').style.display = 'block';
+      document.body.style.overflow = 'hidden';
+    }
+    
+    function closeComparisonModal() {
+      document.getElementById('comparisonModal').style.display = 'none';
+      document.body.style.overflow = 'auto';
+    }
+  </script>
+</body>
+</html>
